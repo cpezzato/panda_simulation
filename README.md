@@ -15,12 +15,13 @@ The packages are a modified versions of the following:
 Make sure you installed ros-melodic-desktop-full and that you have all the necessary packages:
 
   `user@computer:~$ apt-get install -y ros-melodic-controller-manager* ros-melodic-effort-controllers ros-melodic-joint-trajectory-controller ros-melodic-gazebo-ros-pkgs ros-melodic-gazebo-ros-control ros-melodic-rviz* libboost-filesystem-dev libjsoncpp-dev
-` 
+` <br /> 
+
 Clone this resopitory in *your_catkin_ws/src* and then *catkin_make*. 
 
 ## How to use
 Launch the file *simulation.launch*:
 
-`user@computer:~$ cd your_catkin_ws/` 
-`user@computer:~$ source devel/setup.bash` 
+`user@computer:~$ cd your_catkin_ws/` <br /> 
+`user@computer:~$ source devel/setup.bash` <br /> 
 `user@computer:~$ roslaunch panda_similation simulation.launch` 
