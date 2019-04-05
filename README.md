@@ -7,8 +7,8 @@ Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gaz
 
 The packages are a modified versions of the following:
 
-- official franka_ros:
-- panda_simulation: 
+- official franka_ros: https://github.com/frankaemika/franka_ros
+- panda_simulation: https://github.com/erdalpekel/panda_simulation
 
 ## Installation
 
