@@ -24,4 +24,4 @@ Launch the file *simulation.launch*:
 
 `user@computer:~$ cd your_catkin_ws/` <br /> 
 `user@computer:~$ source devel/setup.bash` <br /> 
-`user@computer:~$ roslaunch panda_similation simulation.launch` 
+`user@computer:~$ roslaunch panda_simulation simulation.launch` 
