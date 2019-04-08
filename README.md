@@ -26,8 +26,10 @@ https://github.com/cpezzato/aruco_marker_gazebo
 and put them inside ./gazebo/models (usually in your home directory)
 
 ### How to use
-Once inside the image, clone this resopitory in *your_catkin_ws/src* and then *catkin_make*. Launch the file *simulation.launch*:
-
-`user@computer:~$ cd your_catkin_ws/` <br /> 
-`user@computer:~$ source devel/setup.bash` <br /> 
-`user@computer:~$ roslaunch panda_simulation simulation.launch` 
+Once inside the image
+- Source: `$ source /opt/ros/kinetic/setup.bash` 
+- Create a folder for your catkin_ws: `$ mkdir -p your_catkin_ws/` <br /> 
+- Clone the repository `$ git clone https://github.com/cpezzato/panda_simulation.git src` <br /> 
+- Build the workspace: `$ catkin_make` <br /> 
+- Source: `$ source devel/setup.bash` <br /> 
+- Launch: `$ roslaunch panda_simulation simulation.launch`
