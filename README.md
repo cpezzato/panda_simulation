@@ -1,9 +1,11 @@
-# panda_simulation
+# panda_simulation (work-in-progress)
 
-Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo. It contains two packages:
+Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo. It contains 4 packages:
 
 - franka_description: it contains the description of the robot
+- franka_gazebo: definition of the world with aruco markers
 - panda_simulation: package for launching the simulation loading a jointEffortController for each joint
+- aruco_ros: ROS wrapper for using ArUco libraries
 
 The packages are a modified versions of the following:
 
@@ -12,15 +14,19 @@ The packages are a modified versions of the following:
 
 ## Installation
 
-Make sure you installed ros-melodic-desktop-full and that you have all the necessary packages:
+Make sure you installed ros-kinetic-desktop-full and that you have all the necessary dependencies. You can do that building a singularity image from this singulatity recipe:
 
-  `user@computer:~$ apt-get install -y ros-melodic-controller-manager* ros-melodic-effort-controllers ros-melodic-joint-trajectory-controller ros-melodic-gazebo-ros-pkgs ros-melodic-gazebo-ros-control ros-melodic-rviz* libboost-filesystem-dev libjsoncpp-dev
-` <br /> 
+https://github.com/cpezzato/panda-xenial-docker/blob/master/panda-recipe-minimal-xenial 
 
-Clone this resopitory in *your_catkin_ws/src* and then *catkin_make*. 
+### Download aruco marker
+Download ArUco markers from here:
 
-## How to use
-Launch the file *simulation.launch*:
+https://github.com/cpezzato/aruco_marker_gazebo
+
+and put them inside ./gazebo/models (usually in your home directory)
+
+### How to use
+Once inside the image, clone this resopitory in *your_catkin_ws/src* and then *catkin_make*. Launch the file *simulation.launch*:
 
 `user@computer:~$ cd your_catkin_ws/` <br /> 
 `user@computer:~$ source devel/setup.bash` <br /> 
