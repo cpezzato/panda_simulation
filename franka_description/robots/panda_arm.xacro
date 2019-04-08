@@ -10,6 +10,8 @@
     </xacro:unless>
 
     <xacro:property name="joint_damping" value="1.0"/>
+    <xacro:property name="cameraSize" value="0.05"/>
+    <xacro:property name="cameraMass" value="0.1"/>
 
     <link name="world" />
 
@@ -233,4 +235,5 @@
       <axis xyz="0 0 0"/>
     </joint>
   </xacro:macro>
+
 </robot>

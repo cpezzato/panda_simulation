@@ -38,13 +38,4 @@
         joint: panda_joint7
         pid: { p: 2000, d: 20, i: 0.0, i_clamp: 1 }
 
-    panda_finger1_controller:
-        type: effort_controllers/JointEffortController
-        joint: panda_finger_joint1
-        pid: { p: 5, d: 3.0, i: 0, i_clamp: 1 }
-        
-    panda_finger2_controller:
-        type: effort_controllers/JointEffortController
-        joint: panda_finger_joint2
-        pid: { p: 5, d: 1.0, i: 0, i_clamp: 1 }
 

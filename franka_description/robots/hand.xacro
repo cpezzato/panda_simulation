@@ -8,6 +8,7 @@
         <origin xyz="${xyz}" rpy="${rpy}"/>
       </joint>
     </xacro:unless>
+
     <link name="${ns}_hand">
       <visual>
         <geometry>
