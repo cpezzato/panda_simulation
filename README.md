@@ -2,7 +2,7 @@
 
 ## Current progress
 - Spawn panda robot arm with dynamic description and jointEffortControllers
-- Spawn camera Gazebo sensor plugin and ArUco marker 6
+- Spawn camera Gazebo sensor plugin and ArUco marker 7
 
 ## TODO
 - Caibration of the camera for pose estimation
