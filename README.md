@@ -1,5 +1,13 @@
 # panda_simulation (work-in-progress)
 
+## Current progress
+- Spawn panda robot arm with dynamic description and jointEffortControllers
+- Spawn camera Gazebo sensor plugin and ArUco marker 6
+
+## TODO
+- Caibration of the camera for pose estimation
+- Develop node for the robot control, at the moment no controller is active and the robot falls on the ground
+
 Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo. It contains 4 packages:
 
 - franka_description: it contains the description of the robot
