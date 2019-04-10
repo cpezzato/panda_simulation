@@ -38,7 +38,9 @@ Run a shell within the container:
 - With Nvidia GPU: `$ singularity shell --nv YOUR_IMAGE_NAME` 
 - Without Nvidia GPU: `$ singularity shell YOUR_IMAGE_NAME` 
 <br />
+
 Once inside the image:
+
 - Source: `$ source /opt/ros/kinetic/setup.bash` 
 - Create a folder for your catkin_ws: `$ mkdir -p your_catkin_ws/` <br /> 
 - Clone the repository `$ git clone https://github.com/cpezzato/panda_simulation.git src` <br /> 
