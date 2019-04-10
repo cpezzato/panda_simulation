@@ -37,7 +37,6 @@ and put them inside ./gazebo/models (usually in your home directory)
 Run a shell within the container:
 - With Nvidia GPU: `$ singularity shell --nv YOUR_IMAGE_NAME` 
 - Without Nvidia GPU: `$ singularity shell YOUR_IMAGE_NAME` 
-<br />
 
 Once inside the image:
 
