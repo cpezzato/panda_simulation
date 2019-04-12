@@ -9,7 +9,7 @@
   <xacro:include filename="$(find franka_description)/robots/panda_camera.gazebo.xacro"/>
 
   <xacro:panda_arm />
-  <xacro:panda_camera />
+  <xacro:panda_camera connected_to="panda_link8"/>
 
   <xacro:panda_gazebo robot_name="$(arg robot_name)" />
   <xacro:panda_camera_gazebo />

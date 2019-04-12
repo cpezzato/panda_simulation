@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>panda_control</name>
+  <version>0.0.0</version>
+  <description>The panda_control package</description>
+
+  <maintainer email="cpezzato95@gmail.com">corrado</maintainer>
+
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>TODO</license>
+
+  <!-- For more info on package.xml and CMake list please have a look here:
+
+ 	http://docs.ros.org/jade/api/catkin/html/howto/format1/building_msgs.html
+
+	http://docs.ros.org/jade/api/catkin/html/howto/format2/migrating_from_format_1.html#migrating-from-format1-to-format2 -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>sensor_msgs</depend>
+  
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

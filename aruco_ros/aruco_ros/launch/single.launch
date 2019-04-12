@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <launch>
 
     <arg name="markerId"        default="7"/>
@@ -10,10 +11,10 @@
     <node pkg="aruco_ros" type="single" name="aruco_single">
         <remap from="/camera_info" to="/panda/camera1/camera_info" />
         <remap from="/image" to="/panda/camera1/image_raw" />
-        <param name="image_is_rectified" value="false"/>
+        <param name="image_is_rectified" value="true"/>
         <param name="marker_size"        value="$(arg markerSize)"/>
         <param name="marker_id"          value="$(arg markerId)"/>
-        <param name="reference_frame"    value="panda_link0"/>   <!-- frame in which the marker pose will be refered -->
+        <param name="reference_frame"    value="$(arg ref_frame)"/>   <!-- frame in which the marker pose will be refered -->
         <param name="camera_frame"       value="camera_link"/>
         <param name="marker_frame"       value="$(arg marker_frame)" />
         <param name="corner_refinement"  value="$(arg corner_refinement)" />

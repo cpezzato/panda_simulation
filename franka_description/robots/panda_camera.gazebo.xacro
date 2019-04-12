@@ -22,12 +22,12 @@
 	      	</camera>
 	      	<plugin name="camera_controller" filename="libgazebo_ros_camera.so">
 			<alwaysOn>true</alwaysOn>
-			<updateRate>0.0</updateRate>
+			<updateRate>30.0</updateRate>
 			<cameraName>panda/camera1</cameraName>
 			<imageTopicName>image_raw</imageTopicName>
 			<cameraInfoTopicName>camera_info</cameraInfoTopicName>
 			<frameName>camera</frameName>
-			<hackBaseline>0.07</hackBaseline>
+			<hackBaseline>0.0</hackBaseline>
 			<distortionK1>0.0</distortionK1>
 			<distortionK2>0.0</distortionK2>
 			<distortionK3>0.0</distortionK3>

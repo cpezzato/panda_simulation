@@ -1,7 +1,7 @@
     # Publish joint states
     joint_state_controller:
         type: joint_state_controller/JointStateController
-        publish_rate: 50
+        publish_rate: 1000
 
     panda_joint1_controller:
         type: effort_controllers/JointEffortController
