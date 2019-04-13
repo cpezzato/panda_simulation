@@ -10,6 +10,8 @@
 using  namespace  std;
 using  namespace  Eigen;
 
+int dataReceived = 0;
+
 // Class AIC to hanle the subscribers and the publishers for the active inference controller
 class AIC
 {
@@ -35,10 +37,11 @@ public:
       jointVel(i) = msg->velocity[i];
     }
     // cout << jointPos << "\n\n";
-
-    // Desired final Position for now here since we want to do just state estimation
-    for( int i = 0; i < jointPos.size(); i = i + 1 ) {
-      mu_d(i)=jointPos[i];
+    if (dataReceived == 0){
+      dataReceived = 1;
+      // The first time we retrieve the position we define the initial beliefs about the states
+      mu = jointPos;
+      mu_p = jointVel;
     }
    }
 
@@ -56,9 +59,13 @@ public:
     // Variances
     var_mu = 1.0;
     var_muprime = 1.0;
-    var_q = 1.0;
-    var_qdot = 1.0;
+    var_q = 0.1;
+    var_qdot = 0.1;
     var_eev = 1.0;
+
+    // Learning rates
+    k_mu = 20;
+    k_a = 1200;
 
     // Precision matrices (first set to zero then populate the diagonal)
     SigmaP_yq0 = Matrix<double, 7, 7>::Zero();
@@ -75,45 +82,63 @@ public:
       SigmaP_muprime(i,i) = 1/var_muprime;
     }
 
+    // Initialize control actions
+    u << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+
     // Prior beliefs about the states of the robot
-    mu << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
-    mu_p << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
     mu_pp << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
 
-    // Learning rates
-    k_mu =50;
-    k_a = 1;
+    // Desired final Position for now here since we want to do just state estimation
+    //for( int i = 0; i < jointPos.size(); i = i + 1 ) {
+    //  mu_d(i)=jointPos[i];
+    //}
+
+    mu_d << 0.0, 0.4, 0.0, -0.7, 0.0, 1.6, 0.0;
 
     // Integration step
     h = 0.001;
+
+    // For now SPEv to zero
+    SPEv = 0;
   }
 
   void minimiseF(){
 
     // Sensory prediction errors
     SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
-    SPEmu = (mu_p.transpose()+mu.transpose()-mu_d.transpose())*SigmaP_mu*(mu_p+mu-mu_d);
+    SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);
+    SPEmu_p = (mu_p.transpose()+mu.transpose()-mu_d.transpose())*SigmaP_mu*(mu_p+mu-mu_d);
+    SPEmu_pp = (mu_pp.transpose()+mu_p.transpose())*SigmaP_muprime*(mu_pp+mu_p);
+
     // Free-energy
-    F = SPEq + SPEmu;
+    F = SPEq + SPEdq + SPEv + SPEmu_p + SPEmu_pp;
     // Monitor the free-energy
-    cout << F <<"\n\n";
+    // cout << F <<"\n\n";
 
     // Minimization using gradient descent
     mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
-    // Belifs about the position
-    mu = mu + h*mu_dot;
+    mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p));
+    mu_dot_pp = - k_mu*(SigmaP_muprime*(mu_pp+mu_p));
+
+    // Belifs update
+    mu = mu + h*mu_dot;             // Belief about the position
+    mu_p = mu_p + h*mu_dot_p;       // Belief about motion of mu
+    mu_pp = mu_pp + h*mu_dot_pp;    // Belief about motion of mu'
+
+    // Calculate and send control actions
+    computeActions();
+    //ROS_INFO("JOINT4 = %f", jointPos(6));
   }
 
-  void sendTorques(){
-    // Set the toques
-    tau1.data = 10;
-    tau2.data = -30;
-    tau3.data = 1;
-    tau4.data = 30;
-    tau5.data = 1;
-    tau6.data = 1;
-    tau7.data = 1;
+  void computeActions(){
+    u = u-h*k_a*(SigmaP_yq1*(jointVel-mu_p)+SigmaP_yq0*(jointPos-mu));
+    // cout << u <<"\n\n";
 
+    // Set the toques
+    tau1.data = u(0); tau2.data = u(1); tau3.data = u(2); tau4.data = u(3);
+    tau5.data = u(4); tau6.data = u(5); tau7.data = u(6);
+    //tau1.data = 0; tau2.data = 0; tau3.data = 0; tau4.data = 0;
+    //tau5.data = 0; tau6.data = 0; tau7.data = 0;
     // Publishing
     tauPub1_.publish(tau1); tauPub2_.publish(tau2); tauPub3_.publish(tau3);
     tauPub4_.publish(tau4); tauPub5_.publish(tau5); tauPub6_.publish(tau6);
@@ -139,10 +164,12 @@ private:
   Matrix<double, 7, 1> mu, mu_p, mu_pp, mu_dot, mu_dot_p, mu_dot_pp, jointPos, jointVel;
   // Desired robot's states
   Matrix<double, 7, 1> mu_d;
+  // Control actions
+  Matrix<double, 7, 1> u;
   // Learning rates and integration step
   double k_mu, k_a, h;
   // Sensory prediction errors and Free energy
-  double SPEq, SPEmu, F;
+  double SPEq, SPEdq, SPEv, SPEmu_p, SPEmu_pp, F;
 
 };
 
@@ -176,7 +203,7 @@ int main(int argc, char **argv)
     ros::spinOnce();
 
     // Skip only first cycle to allow reading the sensory input first
-    if (count!=0){
+    if ((count!=0)&&(dataReceived==1)){
       AIC_controller.minimiseF();
     }
     else

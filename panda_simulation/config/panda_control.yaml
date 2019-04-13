@@ -6,36 +6,35 @@
     panda_joint1_controller:
         type: effort_controllers/JointEffortController
         joint: panda_joint1
-        pid: { p: 12000, d: 50, i: 0.0, i_clamp: 10000 }
+        
 
     panda_joint2_controller:
         type: effort_controllers/JointEffortController
         joint: panda_joint2
-        pid: { p: 30000, d: 100, i: 0.02, i_clamp: 10000 }
+       
 
     panda_joint3_controller:
         type: effort_controllers/JointEffortController
         joint: panda_joint3
-        pid: { p: 18000, d: 50, i: 0.01, i_clamp: 1 }
+
 
     panda_joint4_controller:
         type: effort_controllers/JointEffortController
         joint: panda_joint4
-        pid: { p: 18000, d: 70, i: 0.01, i_clamp: 10000 }
-
+ 
     panda_joint5_controller:
         type: effort_controllers/JointEffortController
         joint: panda_joint5
-        pid: { p: 12000, d: 70, i: 0.01, i_clamp: 1 }
+
 
     panda_joint6_controller:
         type: effort_controllers/JointEffortController
         joint: panda_joint6
-        pid: { p: 7000, d: 50, i: 0.01, i_clamp: 1 }
+
 
     panda_joint7_controller:
         type: effort_controllers/JointEffortController
         joint: panda_joint7
-        pid: { p: 2000, d: 20, i: 0.0, i_clamp: 1 }
+
 
 
