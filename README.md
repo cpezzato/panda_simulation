@@ -4,32 +4,39 @@
 - Spawn panda robot arm with dynamic description and jointEffortControllers
 - Spawn camera Gazebo sensor plugin and ArUco marker 7 for camera pose estimation
 - Free-energy minimisation using only proprioceptive sensors
+- Active inferencve usingonly proprioveptive sensors
 
 ## TODO
-- Include the camera in the free-energy minimization 
-- Develop node for the robot control, at the moment no controller is active and the robot falls on the ground, only free-energy minimization is implemented
+- Fine tuning of the controller
+- Include the camera input for state estimation 
+- Add fault detection
 
-Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo. It contains 5 packages:
+## Description
 
-- franka_description: it contains the description of the robot
-- franka_gazebo: definition of the world with aruco markers
-- panda_control: the package that will contain the active inference controller (now the AIC_controller contains just free-energy minimization)
-- panda_simulation: package for launching the simulation loading a jointEffortController for each joint
-- aruco_ros: ROS wrapper for using ArUco libraries
+Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo using Active Inference. This repository contains 5 packages:
 
-The packages are a modified versions of the following:
+- *franka_description*: it contains the description of the robot
+- *franka_gazebo*: definition of the world with aruco markers
+- *panda_control*: the package that will contain the active inference controller (now the AIC_controller contains just free-energy minimization)
+- *panda_simulation*: package for launching the simulation loading a jointEffortController for each joint
+- *aruco_ros*: ROS wrapper for using ArUco libraries
+
+The packages *franka_description* and *panda_simulation* are a modified versions of the following:
 
 - official franka_ros: https://github.com/frankaemika/franka_ros
 - panda_simulation: https://github.com/erdalpekel/panda_simulation
 
+The wrapper fot the ArUco library is cloned from:
+- aruco_ros ROS Wiki: wiki.ros.org/aruco_ros
+
 ## Installation
 
-Make sure you installed ros-kinetic-desktop-full and that you have all the necessary dependencies. You can do that building a singularity image from this singulatity recipe:
+Make sure you installed *ros-kinetic-desktop-full* and that you have all the necessary dependencies. You can do that building a singularity image from this singulatity recipe:
 
 https://github.com/cpezzato/panda-xenial-docker/blob/master/panda-recipe-minimal-xenial 
 
 ### Download aruco marker
-Download ArUco markers from here:
+Download ArUco markers from here (only if you intend to use the *aruco_ros* wrapper):
 
 https://github.com/cpezzato/aruco_marker_gazebo
 
@@ -49,6 +56,12 @@ Once inside the image:
 - Source: `$ source devel/setup.bash` <br /> 
 - Launch: `$ roslaunch panda_simulation simulation.launch`
 
-The launch file has the GUI disable since this is a development phase. Modified the value to "true" in the launch file so see what is going on. You can then run the node panda_control_AIC to see the free-energy minimization printed out:
+The launch file launches a Gazebo simulation in pause. You can then run the node panda_control_AIC and play the simulation to see the robot moving to the set-point. 
 
 -`$ rosrun panda_control panda_control_AIC` 
+- Then *play* in the Gazebo GUI
+
+The result is the following:
+<p align="center">
+<img src="https://user-images.githubusercontent.com/49310726/56082030-1ff4bb00-5e14-11e9-99c2-75cce8668375.png" width="531" height="332">
+</p>
