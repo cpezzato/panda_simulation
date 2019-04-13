@@ -58,7 +58,7 @@ Once inside the image:
 
 The launch file launches a Gazebo simulation in pause. You can then run the node panda_control_AIC and play the simulation to see the robot moving to the set-point. 
 
--`$ rosrun panda_control panda_control_AIC` 
+- `$ rosrun panda_control panda_control_AIC` 
 - Then *play* in the Gazebo GUI
 
 The result is the following:
