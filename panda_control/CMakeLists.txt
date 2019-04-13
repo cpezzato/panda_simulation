@@ -69,14 +69,16 @@ catkin_package( CATKIN_DEPENDS
 ## Build ##
 ###########
 
+# Add AIC library
 include_directories(
+  include
 	${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/panda_control.cpp
-# )
+add_library(${PROJECT_NAME}
+  src/AIC.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -88,5 +90,5 @@ include_directories(
 add_executable(${PROJECT_NAME}_AIC src/AIC_controller.cpp)
 add_dependencies(${PROJECT_NAME}_AIC ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME}_AIC
-   ${catkin_LIBRARIES}
+   ${catkin_LIBRARIES} ${PROJECT_NAME} 
 )
