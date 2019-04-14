@@ -234,6 +234,21 @@
       <child link="${arm_id}_link8"/>
       <axis xyz="0 0 0"/>
     </joint>
+
+    <link name="marker_link">
+    <visual>
+      <geometry>
+          <mesh filename="package://${description_pkg}/meshes/visual/marker.dae" scale="1 1 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="marker_joint" type="fixed">
+    <origin rpy="0 0 ${-pi/2}" xyz="0.75 0 0"/>
+    <parent link="panda_link0"/>
+    <child link="marker_link"/>
+  </joint>
+
   </xacro:macro>
 
 </robot>

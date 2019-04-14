@@ -37,9 +37,8 @@
 
   void   AIC::cameraCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
   {
-    // Save end-effector position from the wrapper aruco_ros
-    eePos.x = msg->pose.position.y;
-    eePos.y = msg->pose.position.x;
+    eePos.x = msg->pose.position.x;
+    eePos.y = msg->pose.position.y;
     eePos.z = msg->pose.position.z;
     ROS_INFO("x = %f  y = %f  z = %f ", eePos.x, eePos.y, eePos.z);
   }
