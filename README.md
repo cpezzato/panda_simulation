@@ -63,5 +63,5 @@ The launch file launches a Gazebo simulation in pause. You can then run the node
 
 The result is the following:
 <p align="center">
-<img src="https://user-images.githubusercontent.com/49310726/56133236-3887e100-5f8c-11e9-9ed9-d51f2dd8f834.png" width="410" height="386">
+<img src="https://user-images.githubusercontent.com/49310726/56133236-3887e100-5f8c-11e9-9ed9-d51f2dd8f834.png" width="410" height="286">
 </p>
