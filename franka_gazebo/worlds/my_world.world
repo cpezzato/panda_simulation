@@ -8,7 +8,7 @@
       <uri>model://sun</uri>
     </include>
     <include>
-      <pose> 1 0 0  0 0 0 </pose>
+      <pose> 1 0 0.001 0 0 0 </pose>
       <uri>model://aruco_visual_marker_7</uri>
     </include>
   </world>

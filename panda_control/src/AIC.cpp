@@ -33,6 +33,11 @@
       mu = jointPos;
       mu_p = jointVel;
     }
+
+    // Transformation from end-effector to base
+    DH_T = AIC::getEEPose(jointPos);
+    eePosition << DH_T(0,3), DH_T(1,3), DH_T(2,3);
+    std::cout << eePosition << std::endl;
   }
 
   void   AIC::cameraCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
@@ -97,6 +102,11 @@
 
     // For now the sensory prediction error for the camera SPEv is set to zero
     SPEv = 0;
+
+    // Initialization of the DH parameters
+    DH_a << 0.0, 0.0, 0.0825, -0.0825, 0.0, 0.088, 0.0;
+    DH_d << 0.33, 0.0, 0.316, 0.0, 0.384, 0.0, 0.107;
+    DH_alpha << M_PI_2, -M_PI_2, M_PI_2, -M_PI_2, M_PI_2, M_PI_2, 0;
   }
 
   void   AIC::minimiseF(){
@@ -148,4 +158,20 @@
     for(int i=0; i<desiredPos.size(); i++){
       mu_d(i) = desiredPos[i];
     }
+  }
+  // Compute the direct kinematics
+  Eigen::Matrix<double, 4, 4> AIC::getEEPose(Eigen::Matrix<double, 7, 1> theta){
+    // Initialize transformation matrix for the end effector DH_T
+    DH_T = Eigen::Matrix<double, 4, 4>::Identity();
+    // Compute DK
+    theta(1) = -theta(1);
+    for(int k=0; k<7; k++){
+      DH_A << cos(theta(k)), -sin(theta(k))*cos(DH_alpha(k)), sin(theta(k))*sin(DH_alpha(k)), DH_a(k)*cos(theta(k)),
+              sin(theta(k)), cos(theta(k))*cos(DH_alpha(k)), -cos(theta(k))*sin(DH_alpha(k)), DH_a(k)*sin(theta(k)),
+                   0.0,                sin(DH_alpha(k)),              cos(DH_alpha(k)),               DH_d(k),
+                   0.0,                      0.0,                            0.0,                      1.0;
+      // Trasfrmation to the joint7
+      DH_T = DH_T*DH_A;
+    }
+    return(DH_T);
   }

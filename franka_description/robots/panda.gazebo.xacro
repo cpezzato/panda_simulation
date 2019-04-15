@@ -6,7 +6,7 @@
 
         <!-- Link0 -->
         <gazebo reference="${robot_name}_link0">
-            
+
             <mu1>0.2</mu1>
             <mu2>0.2</mu2>
         </gazebo>

@@ -10,8 +10,6 @@
     </xacro:unless>
 
     <xacro:property name="joint_damping" value="1.0"/>
-    <xacro:property name="cameraSize" value="0.05"/>
-    <xacro:property name="cameraMass" value="0.1"/>
 
     <link name="world" />
 
@@ -224,18 +222,20 @@
     <link name="${arm_id}_link8">
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.0"/>
+        <mass value="0.001"/>
         <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
       </inertial>
     </link>
-    <joint name="${arm_id}_joint8" type="fixed">
+    <joint name="${arm_id}_joint8" type="revolute">
       <origin rpy="0 0 0" xyz="0 0 0.107"/>
       <parent link="${arm_id}_link7"/>
       <child link="${arm_id}_link8"/>
-      <axis xyz="0 0 0"/>
+      <axis xyz="0 0 1"/>
+      <limit effort="1" lower="0" upper="0.1" velocity="0.1"/>
+      <dynamics damping="100"/>
     </joint>
 
-    <link name="marker_link">
+    <!--link name="marker_link">
     <visual>
       <geometry>
           <mesh filename="package://${description_pkg}/meshes/visual/marker.dae" scale="1 1 0.001"/>
@@ -244,10 +244,10 @@
   </link>
 
   <joint name="marker_joint" type="fixed">
-    <origin rpy="0 0 ${-pi/2}" xyz="0.75 0 0"/>
+    <origin rpy="0 0 ${-pi/2}" xyz="-0.75 0 0"/>
     <parent link="panda_link0"/>
     <child link="marker_link"/>
-  </joint>
+  </joint-->
 
   </xacro:macro>
 

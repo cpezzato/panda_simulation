@@ -4,7 +4,7 @@
   <xacro:macro name="panda_camera_gazebo">
 
  <!-- Camera -->
-    <gazebo reference="camera_link">
+    <gazebo reference="panda_camera">
     	<material>Gazebo/Green</material>
 	    	<sensor type="camera" name="camera1">
 	      	<update_rate>30.0</update_rate>
@@ -26,7 +26,8 @@
 			<cameraName>panda/camera1</cameraName>
 			<imageTopicName>image_raw</imageTopicName>
 			<cameraInfoTopicName>camera_info</cameraInfoTopicName>
-			<frameName>camera</frameName>
+			<frameName>panda_camera_frame</frameName>
+      <broadcastTF>true</broadcastTF>
 			<hackBaseline>0.0</hackBaseline>
 			<distortionK1>0.0</distortionK1>
 			<distortionK2>0.0</distortionK2>
@@ -39,4 +40,3 @@
   </xacro:macro>
 
 </robot>
-

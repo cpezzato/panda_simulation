@@ -15,8 +15,11 @@
 
 #ifndef AIC_H
 #define AIC_H
+#define _USE_MATH_DEFINES
+
 #include "ros/ros.h"
 #include <vector>
+#include <cmath>
 #include <sensor_msgs/JointState.h>
 #include "std_msgs/Float64.h"
 #include "geometry_msgs/PoseStamped.h"
@@ -46,6 +49,8 @@ public:
   int dataReady();
   // Set desired position
   void setGoal(std::vector<double> desiredPos);
+  // get end-effector position from direct kinematics
+  Eigen::Matrix<double, 4, 4> getEEPose(Eigen::Matrix<double, 7, 1> theta);
 
 private:
   // Define variables for storing the end-effector position
@@ -80,6 +85,11 @@ private:
   ros::Subscriber sensorSub, cameraSub;
   // Support variables to contain the torques for the joints
   std_msgs::Float64 tau1, tau2, tau3, tau4, tau5, tau6, tau7;
+  // Values for direct kinematics computation using DH parameters
+  Eigen::Matrix<double, 7, 1> DH_a, DH_d, DH_alpha;
+  Eigen::Matrix<double, 4, 4> DH_T, DH_A;
+  Eigen::Matrix<double, 3, 1> eePosition;
+
 };
 
 #endif

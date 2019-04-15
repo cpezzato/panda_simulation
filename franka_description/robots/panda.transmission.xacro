@@ -87,5 +87,16 @@
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
+
+        <transmission name="${robot_name}_tran_8">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${robot_name}_joint8">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${robot_name}_motor_8">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
     </xacro:macro>
 </robot>
