@@ -123,7 +123,8 @@
 
     // Free-energy as a sum of squared values (i.e. sum the SPE)
     F = SPEq + SPEdq + SPEv + SPEmu_p + SPEmu_pp;
-    
+    ROS_INFO("%f", F);
+
     // Free-energy minimization using gradient descent and beliefs update
     mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
     mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p)-SigmaP_yv0*(eev(0)-g(0))*gxprime -SigmaP_yv0*(eev(1)-g(1))*gyprime -SigmaP_yv0*(eev(2)-g(2))*gzprime);
