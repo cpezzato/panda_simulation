@@ -34,10 +34,17 @@
       mu_p = jointVel;
     }
 
-    // Transformation from end-effector to base
-    DH_T = AIC::getEEPose(jointPos);
-    eePosition << DH_T(0,3), DH_T(1,3), DH_T(2,3);
-    std::cout << eePosition << std::endl;
+    // Generative model and its derivative from object grnMod of the class generativeModel
+    g = genMod.getG(jointPos);
+    gxprime = genMod.getGxprime(jointPos);
+    gyprime = genMod.getGyprime(jointPos);
+    gzprime = genMod.getGzprime(jointPos);
+
+    // Simulate camera input from direct kinematics
+    eev(0) = g(0) + 0.01*(((double) rand() / (RAND_MAX)));
+    eev(1) = g(1) + 0.01*(((double) rand() / (RAND_MAX)));
+    eev(2) = g(2) + 0.01*(((double) rand() / (RAND_MAX)));
+    //std::cout << eev(1)-g(1) << std::endl;
   }
 
   void   AIC::cameraCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
@@ -100,9 +107,6 @@
     // Integration step
     h = 0.001;
 
-    // For now the sensory prediction error for the camera SPEv is set to zero
-    SPEv = 0;
-
     // Initialization of the DH parameters
     DH_a << 0.0, 0.0, 0.0825, -0.0825, 0.0, 0.088, 0.0;
     DH_d << 0.33, 0.0, 0.316, 0.0, 0.384, 0.0, 0.107;
@@ -113,16 +117,20 @@
     // Compute single sensory prediction errors
     SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
     SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);
+    SPEv = var_eev*((eev(0)-g(0))*(eev(0)-g(0))+(eev(1)-g(1))*(eev(1)-g(1))+(eev(2)-g(2))*(eev(2)-g(2)));
     SPEmu_p = (mu_p.transpose()+mu.transpose()-mu_d.transpose())*SigmaP_mu*(mu_p+mu-mu_d);
     SPEmu_pp = (mu_pp.transpose()+mu_p.transpose())*SigmaP_muprime*(mu_pp+mu_p);
 
     // Free-energy as a sum of squared values (i.e. sum the SPE)
     F = SPEq + SPEdq + SPEv + SPEmu_p + SPEmu_pp;
-
+    
     // Free-energy minimization using gradient descent and beliefs update
     mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
-    mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p));
+    mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p)-SigmaP_yv0*(eev(0)-g(0))*gxprime -SigmaP_yv0*(eev(1)-g(1))*gyprime -SigmaP_yv0*(eev(2)-g(2))*gzprime);
     mu_dot_pp = - k_mu*(SigmaP_muprime*(mu_pp+mu_p));
+
+    // Without camera for state estimation
+
 
     // Belifs update
     mu = mu + h*mu_dot;             // Belief about the position
@@ -136,6 +144,8 @@
   void   AIC::computeActions(){
     // Compute control actions through gradient descent of F
     u = u-h*k_a*(SigmaP_yq1*(jointVel-mu_p)+SigmaP_yq0*(jointPos-mu));
+
+    //SigmaP_yv0_real*(y.eev-[g.gx; g.gy])
 
     // Set the toques from u and publish
     tau1.data = u(0); tau2.data = u(1); tau3.data = u(2); tau4.data = u(3);

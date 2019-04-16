@@ -26,6 +26,8 @@
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Dense>
 #include <iostream>
+#include "generativeModel.h"
+#include <stdlib.h>
 
 // Class AIC to hanle the subscribers and the publishers for the active inference controller
 class AIC
@@ -89,7 +91,12 @@ private:
   Eigen::Matrix<double, 7, 1> DH_a, DH_d, DH_alpha;
   Eigen::Matrix<double, 4, 4> DH_T, DH_A;
   Eigen::Matrix<double, 3, 1> eePosition;
-
+  // Object of the generative model class
+  // Object for the generative model
+  generativeModel genMod;
+  // Variables for storing the generative model and the derivatives
+  Eigen::Matrix<double, 3, 1> g, eev;
+  Eigen::Matrix<double, 7, 1> gxprime, gyprime, gzprime;
 };
 
 #endif
