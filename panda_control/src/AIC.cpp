@@ -45,6 +45,10 @@
     eev(1) = g(1) + 0.01*(((double) rand() / (RAND_MAX)));
     eev(2) = g(2) + 0.01*(((double) rand() / (RAND_MAX)));
     //std::cout << eev(1)-g(1) << std::endl;
+    //T = AIC::getEEPose(jointPos);
+    //std::cout << T(0,3)-g(0) << std::endl;
+    //std::cout << T(1,3)-g(1) << std::endl;
+    //std::cout << T(2,3)-g(2) << std::endl;
   }
 
   void   AIC::cameraCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
@@ -64,6 +68,8 @@
     tauPub5 = nh.advertise<std_msgs::Float64>("/panda_joint5_controller/command", 20);
     tauPub6 = nh.advertise<std_msgs::Float64>("/panda_joint6_controller/command", 20);
     tauPub7 = nh.advertise<std_msgs::Float64>("/panda_joint7_controller/command", 20);
+    // Publisher for the free-energy
+    IFE_pub = nh.advertise<std_msgs::Float64>("free_energy", 10);
 
     // Subscribers for proprioceptive sensors (i.e. from joint:states) and camera position (i.e. aruco_single/pose)
     sensorSub = nh.subscribe("joint_states", 1, &AIC::jointStatesCallback, this);
@@ -109,11 +115,11 @@
 
     // Initialization of the DH parameters
     DH_a << 0.0, 0.0, 0.0825, -0.0825, 0.0, 0.088, 0.0;
-    DH_d << 0.33, 0.0, 0.316, 0.0, 0.384, 0.0, 0.107;
+    DH_d << 0.333, 0.0, 0.316, 0.0, 0.384, 0.0, 0.107;
     DH_alpha << M_PI_2, -M_PI_2, M_PI_2, -M_PI_2, M_PI_2, M_PI_2, 0;
   }
 
-  void   AIC::minimiseF(){
+  void AIC::minimiseF(){
     // Compute single sensory prediction errors
     SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
     SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);
@@ -122,12 +128,12 @@
     SPEmu_pp = (mu_pp.transpose()+mu_p.transpose())*SigmaP_muprime*(mu_pp+mu_p);
 
     // Free-energy as a sum of squared values (i.e. sum the SPE)
-    F = SPEq + SPEdq + SPEv + SPEmu_p + SPEmu_pp;
-    ROS_INFO("%f", F);
+    F.data = SPEq + SPEdq + SPEv + SPEmu_p + SPEmu_pp;
+    //ROS_INFO("%f", F);
 
     // Free-energy minimization using gradient descent and beliefs update
-    mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
-    mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p)-SigmaP_yv0*(eev(0)-g(0))*gxprime -SigmaP_yv0*(eev(1)-g(1))*gyprime -SigmaP_yv0*(eev(2)-g(2))*gzprime);
+    mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d)-SigmaP_yv0*(eev(0)-g(0))*gxprime -SigmaP_yv0*(eev(1)-g(1))*gyprime -SigmaP_yv0*(eev(2)-g(2))*gzprime);
+    mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p));
     mu_dot_pp = - k_mu*(SigmaP_muprime*(mu_pp+mu_p));
 
     // Without camera for state estimation
@@ -140,6 +146,9 @@
 
     // Calculate and send control actions
     AIC::computeActions();
+
+    // Publish free-energy
+    IFE_pub.publish(F);
   }
 
   void   AIC::computeActions(){

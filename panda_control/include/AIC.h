@@ -75,21 +75,21 @@ private:
   Eigen::Matrix<double, 7, 1> u;
   // Learning rates and integration step for the AIC
   double k_mu, k_a, h;
-  // Sensory prediction errors and Free energy
-  double SPEq, SPEdq, SPEv, SPEmu_p, SPEmu_pp, F;
+  // Sensory prediction errors
+  double SPEq, SPEdq, SPEv, SPEmu_p, SPEmu_pp;
   // Support variable to control the flow of the script
   int dataReceived;
   // ROS related Variables, node handle
   ros::NodeHandle nh;
   // Publishers for joint torques to the topics /panda_joint*_controller/command
-  ros::Publisher tauPub1, tauPub2, tauPub3, tauPub4, tauPub5, tauPub6, tauPub7;
+  ros::Publisher tauPub1, tauPub2, tauPub3, tauPub4, tauPub5, tauPub6, tauPub7, IFE_pub;
   // Subscriber for proprioceptive sensors (i.e. from joint_states) and camera (i.e. aruco_single/pose)
   ros::Subscriber sensorSub, cameraSub;
   // Support variables to contain the torques for the joints
-  std_msgs::Float64 tau1, tau2, tau3, tau4, tau5, tau6, tau7;
+  std_msgs::Float64 tau1, tau2, tau3, tau4, tau5, tau6, tau7, F;
   // Values for direct kinematics computation using DH parameters
   Eigen::Matrix<double, 7, 1> DH_a, DH_d, DH_alpha;
-  Eigen::Matrix<double, 4, 4> DH_T, DH_A;
+  Eigen::Matrix<double, 4, 4> DH_T, DH_A, T;
   Eigen::Matrix<double, 3, 1> eePosition;
   // Object of the generative model class
   // Object for the generative model
