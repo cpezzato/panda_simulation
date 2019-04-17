@@ -179,6 +179,7 @@
       mu_d(i) = desiredPos[i];
     }
   }
+  
   // Compute the direct kinematics
   Eigen::Matrix<double, 4, 4> AIC::getEEPose(Eigen::Matrix<double, 7, 1> theta){
     // Initialize transformation matrix for the end effector DH_T

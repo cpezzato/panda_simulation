@@ -37,8 +37,9 @@ include_directories(
 
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
-  src/AIC.cpp
-  src/generativeModel.cpp
+  src/classes/AIC.cpp
+  src/classes/MRAC.cpp
+  src/classes/generativeModel.cpp
 )
 
 
@@ -47,5 +48,11 @@ add_library(${PROJECT_NAME}
 add_executable(${PROJECT_NAME}_AIC src/AIC_controller.cpp)
 add_dependencies(${PROJECT_NAME}_AIC ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME}_AIC
+   ${catkin_LIBRARIES} ${PROJECT_NAME}
+)
+
+add_executable(${PROJECT_NAME}_MRAC src/MRAC_controller.cpp)
+add_dependencies(${PROJECT_NAME}_MRAC ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${PROJECT_NAME}_MRAC
    ${catkin_LIBRARIES} ${PROJECT_NAME}
 )
