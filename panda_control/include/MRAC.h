@@ -48,12 +48,14 @@ public:
   void computeControlInput();
 
 private:
-  // Variables for sensory information
-  Eigen::Matrix<double, 7, 1> jointPos, jointVel;
+  // Variables for sensory information and control input
+  Eigen::Matrix<double, 7, 1> jointPos, jointVel, u;
   // Support variables to contain the torques for the joints
   std_msgs::Float64 tau1, tau2, tau3, tau4, tau5, tau6, tau7;
-  // Desired robot's states, column vector of 7 elements
-  Eigen::Matrix<double, 7, 1> qGoal, qdotGoal;
+  // Desired robot's states and error, column vector of 7 elements
+  Eigen::Matrix<double, 7, 1> qr, dqr, qe, x_qe, qe_integral;
+  // States to perform integrals of the error signal simulating a first order system as integrator
+  Eigen::Matrix<double, 7, 7> X_qr, X_dqr, X_q, X_dq, qe_q_integral, qe_qr_integral, qe_dq_integral, qe_dqr_integral;
   // Support variable to control the flow of the script
   int dataReceived;
   // ROS related Variables, node handle
@@ -70,7 +72,7 @@ private:
   // Controller parameters
   Eigen::Matrix<double, 7, 7> ALPHA1, ALPHA2, ALPHA3, E01, E02, E03, E11, E12, E13, F01, F02, F03, F11, F12, F13;
   // Support variables for adaptation law
-  Eigen::Matrix<double, 7, 1> l1, l2, p2, p3, alpha1, alpha2, alpha3, e01, e02, e03, e11, e12, e13, f01, f02, f03, f11, f12, f13, qe;
+  Eigen::Matrix<double, 7, 1> f, l1, l2, p2, p3, alpha1, alpha2, alpha3, e01, e02, e03, e11, e12, e13, f01, f02, f03, f11, f12, f13;
   Eigen::Matrix<double, 7, 7> P2, P3;
   // Integration step
   double h;

@@ -32,33 +32,43 @@
     sensorSub = nh.subscribe("joint_states", 1, &MRAC::jointStatesCallback, this);
 
     // Set goal for velocity (always zero), the goal for the position is set by the main node MRAC_controller_node
-    qdotGoal << 0, 0, 0, 0, 0, 0, 0;
+    dqr << 0, 0, 0, 0, 0, 0, 0;
+    // Set initial conditions for the states for the integrals
+    x_qe << 0, 0, 0, 0, 0, 0, 0;
+    X_qr << Eigen::Matrix<double, 7, 7>::Zero();
+    X_dqr << Eigen::Matrix<double, 7, 7>::Zero();
+    X_q << Eigen::Matrix<double, 7, 7>::Zero();
+    X_dq << Eigen::Matrix<double, 7, 7>::Zero();
 
     // Support variable
     dataReceived = 0;
+    // Integration step
+    h = 0.001;
 
     // MRAC Variables
-    // NAtural pulsation
-    omega << 5, 5, 5, 5, 5, 5, 5;
+    // Natural pulsation
+    omega << 2, 2, 2, 2, 2, 2, 2;
     // Damping
     zeta << 1, 1, 1, 1, 1, 1, 1;
 
     // Controller parameters
-    alpha1 << 1, 1, 1, 1, 1, 1, 1;
-    alpha2 << 1, 1, 1, 1, 1, 1, 1;
-    alpha3 << 1, 1, 1, 1, 1, 1, 1;
-    e01 << 1, 1, 1, 1, 1, 1, 1;
-    e02 << 1, 1, 1, 1, 1, 1, 1;
+    alpha1 << 40, 200, 40, 200, 200, 200, 40;
+    alpha2 << 4, 4, 4, 4, 4, 4, 4;
+    alpha3 << 0, 0, 0, 0, 0, 0, 0;
+    e01 << 20, 40, 20, 40, 20, 40, 20;
+    e02 << 2, 4, 2, 4, 2, 4, 2;
     e03 << 0, 0, 0, 0, 0, 0, 0;
-    e11 << 1, 1, 1, 1, 1, 1, 1;
-    e12 << 1, 1, 1, 1, 1, 1, 1;
+    e11 << 10, 20, 10, 20, 10, 20, 10;
+    e12 << 1, 2, 1, 2, 1, 2, 1;
     e13 << 0, 0, 0, 0, 0, 0, 0;
-    f01 << 1, 1, 1, 1, 1, 1, 1;
+    f01 << 10, 10, 10, 10, 50, 50, 50;
     f02 << 1, 1, 1, 1, 1, 1, 1;
     f03 << 0, 0, 0, 0, 0, 0, 0;
+    // Not used for constant ref
     f11 << 1, 1, 1, 1, 1, 1, 1;
-    f12 << 1, 1, 1, 1, 1, 1, 1;
+    f12 << 1, 1, 1, 1, 10, 10, 10;
     f13 << 0, 0, 0, 0, 0, 0, 0;
+    ////////////////////////////
     l1 << 1, 1, 1, 1, 1, 1, 1;
     l2 << 1, 1, 1, 1, 1, 1, 1;
 
@@ -75,6 +85,8 @@
    K1_hat = Eigen::Matrix<double, 7, 7>::Zero();
    Q0_hat = Eigen::Matrix<double, 7, 7>::Zero();
    Q1_hat = Eigen::Matrix<double, 7, 7>::Zero();
+
+   // Controller parameters
    ALPHA1 = Eigen::Matrix<double, 7, 7>::Zero();
    ALPHA2 = Eigen::Matrix<double, 7, 7>::Zero();
    ALPHA3 = Eigen::Matrix<double, 7, 7>::Zero();
@@ -131,7 +143,7 @@
 
   void MRAC::setGoal(std::vector<double> desiredPos){
     for(int i=0; i<desiredPos.size(); i++){
-      qGoal(i) = desiredPos[i];
+      qr(i) = desiredPos[i];
     }
   }
 
@@ -144,5 +156,48 @@
   }
 
   void MRAC::computeControlInput(){
-    ROS_INFO("Add MRAC here");
+
+    // Definition of the modified joint angle error
+    qe = P2*(qr-jointPos)+P3*(dqr-jointVel);
+
+    // Feed-forward term f
+    // Integral of qe using first order system as integrator
+    qe_integral = x_qe;
+    x_qe = x_qe + h*qe;
+    f = ALPHA1*qe + ALPHA2*qe_integral;
+
+    // Adaptive gain K0
+    qe_q_integral = X_q;
+    X_q = X_q + qe*jointPos.transpose();
+
+    K0 = K0_hat + E01*(qe*jointPos.transpose()) + E02*qe_q_integral;
+
+    // Adaptive gain K1
+    qe_dq_integral = X_q;
+    X_dq = X_dq + qe*jointVel.transpose();
+    K1 = K1_hat + E11*(qe*jointVel.transpose()) + E12*qe_dq_integral;
+
+    // Adaptive gain Q0
+    qe_qr_integral = X_qr;
+    X_qr = X_qr + qe*qr.transpose();
+    Q0 = Q0_hat + F01*(qe*qr.transpose()) + F02*qe_qr_integral;
+
+    // Adaptive gain K1
+    qe_dqr_integral = X_dqr;
+    X_dqr = X_dqr + qe*dqr.transpose();
+    Q1 = Q1_hat + F11*(qe*dqr.transpose()) + F12*qe_dqr_integral;
+    // std::cout << Q1 << '\n';
+    // Torque to the robot arm
+    u = (K0*jointPos + K1*jointVel + Q0*qr + Q1*dqr + f);
+    // std::cout << "Start" << '\n';
+    // std::cout << u << '\n';
+    // Build and send command messages
+    // Set the toques from u and publish
+    tau1.data = u(0); tau2.data = u(1); tau3.data = u(2); tau4.data = u(3);
+    tau5.data = u(4); tau6.data = u(5); tau7.data = u(6);
+    // Publishing
+    tauPub1.publish(tau1); tauPub2.publish(tau2); tauPub3.publish(tau3);
+    tauPub4.publish(tau4); tauPub5.publish(tau5); tauPub6.publish(tau6);
+    tauPub7.publish(tau7);
+    // ROS_INFO("here");
   }
