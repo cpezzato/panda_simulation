@@ -3,13 +3,14 @@
 ## Current progress (DONE)
 - Spawn panda robot arm with dynamic description and jointEffortControllers
 - Spawn camera Gazebo sensor plugin and ArUco marker 7 for camera pose estimation
-- Free-energy minimisation using only proprioceptive sensors
-- Active inferencve usingonly proprioveptive sensors
+- Free-energy minimisation using proprioceptive and visual sensors
+- Active inferencve control
+- Model reference adaptive control
 
 ## TODO
-- Fine tuning of the controller
-- Include the camera input for state estimation 
-- Add fault detection
+- Fine tuning of the controllers (even though the performance are now accettable)
+- Include the camera input for state estimation (now the sensor is simulated using noisy data from the DK)
+- Add fault detection (for these we need the dynamic model of the robot)
 
 ## Description
 
@@ -17,7 +18,7 @@ Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gaz
 
 - *franka_description*: it contains the description of the robot
 - *franka_gazebo*: definition of the world with aruco markers
-- *panda_control*: the package that will contain the active inference controller (now the AIC_controller contains just free-energy minimization)
+- *panda_control*: the package contains the active inference controller and a model reference adaptive controller for comparison
 - *panda_simulation*: package for launching the simulation loading a jointEffortController for each joint
 - *aruco_ros*: ROS wrapper for using ArUco libraries
 
@@ -56,12 +57,12 @@ Once inside the image:
 - Source: `$ source devel/setup.bash` <br /> 
 - Launch: `$ roslaunch panda_simulation simulation.launch`
 
-The launch file launches a Gazebo simulation in pause. You can then run the node panda_control_AIC and play the simulation to see the robot moving to the set-point. 
+The launch file launches a Gazebo simulation in pause. You can then run the node *panda_control_AIC* for the active inference controller (AIC) and play the simulation to see the robot moving to the set-point. Alternatively one can run the model reference adaptive controller (MRAC) through the node *panda_control_MRAC*. 
 
 - `$ rosrun panda_control panda_control_AIC` 
 - Then *play* in the Gazebo GUI
 
-The result is the following:
+The result with any of the two controllers is the following:
 <p align="center">
 <img src="https://user-images.githubusercontent.com/49310726/56133236-3887e100-5f8c-11e9-9ed9-d51f2dd8f834.png" width="410" height="286">
 </p>
