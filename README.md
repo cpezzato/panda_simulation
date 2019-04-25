@@ -10,14 +10,13 @@
 ## TODO
 - Fine tuning of the controllers (even though the performance are now accettable)
 - Include the camera input for state estimation (now the sensor is simulated using noisy data from the DK)
-- Add fault detection (for these we need the dynamic model of the robot)
+- Fault detection (for these we need the dynamic model of the robot)
 
 ## Description
 
-Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo using Active Inference. This repository contains 5 packages:
+Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo using Active Inference. This repository contains 4 packages:
 
 - *franka_description*: it contains the description of the robot
-- *franka_gazebo*: definition of the world with aruco markers
 - *panda_control*: the package contains the active inference controller and a model reference adaptive controller for comparison
 - *panda_simulation*: package for launching the simulation loading a jointEffortController for each joint
 - *aruco_ros*: ROS wrapper for using ArUco libraries
@@ -35,13 +34,6 @@ The wrapper fot the ArUco library is cloned from:
 Make sure you installed *ros-kinetic-desktop-full* and that you have all the necessary dependencies. You can do that building a singularity image from this singulatity recipe:
 
 https://github.com/cpezzato/panda-xenial-docker/blob/master/panda-recipe-minimal-xenial 
-
-### Download aruco marker
-Download ArUco markers from here (only if you intend to use the *aruco_ros* wrapper):
-
-https://github.com/cpezzato/aruco_marker_gazebo
-
-and put them inside ./gazebo/models (usually in your home directory)
 
 ### How to use
 Run a shell within the container:
@@ -64,5 +56,5 @@ The launch file launches a Gazebo simulation in pause. You can then run the node
 
 The result with any of the two controllers is the following:
 <p align="center">
-<img src="https://user-images.githubusercontent.com/49310726/56133236-3887e100-5f8c-11e9-9ed9-d51f2dd8f834.png" width="410" height="286">
+<img src="https://user-images.githubusercontent.com/49310726/56719843-cf4d5e00-6741-11e9-8a62-ed898c4ddee4.png" width="326" height="219">
 </p>
