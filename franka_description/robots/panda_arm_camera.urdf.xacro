@@ -6,12 +6,16 @@
   <xacro:include filename="$(find franka_description)/robots/panda_camera.xacro"/>
   <xacro:include filename="$(find franka_description)/robots/panda.gazebo.xacro"/>
   <xacro:include filename="$(find franka_description)/robots/panda.transmission.xacro"/>
+
   <xacro:include filename="$(find franka_description)/robots/panda_camera.gazebo.xacro"/>
 
   <xacro:panda_arm />
-  <xacro:panda_camera ns="panda" connected_to="panda_link8" rpy="${pi} ${-pi/2} 0" xyz="0 0 0"/>
+  <xacro:panda_camera ns="panda" connected_to="world" rpy="0 ${-pi/3} ${pi}" xyz="1 0 0.05"/>
+  <!--Other frame with possible use with Aruco, this has the z pointing to the image-->
+  <!--xacro:panda_camera ns="camera_ref" connected_to="world" rpy="0 ${-pi/3+pi/2} ${pi}" xyz="1 0 0.05"/-->
 
   <xacro:panda_gazebo robot_name="$(arg robot_name)" />
   <xacro:panda_camera_gazebo />
+
   <xacro:panda_transmission robot_name="$(arg robot_name)" />
 </robot>

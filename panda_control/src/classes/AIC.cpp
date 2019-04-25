@@ -56,7 +56,7 @@
     eePos.x = msg->pose.position.x;
     eePos.y = msg->pose.position.y;
     eePos.z = msg->pose.position.z;
-    ROS_INFO("x = %f  y = %f  z = %f ", eePos.x, eePos.y, eePos.z);
+    ROS_INFO("x = %f  y = %f  z = %f ", eePos.x-eev(0), eePos.y-eev(1), eePos.z-eev(2));
   }
 
   void   AIC::initVariables(){
@@ -70,6 +70,10 @@
     tauPub7 = nh.advertise<std_msgs::Float64>("/panda_joint7_controller/command", 20);
     // Publisher for the free-energy
     IFE_pub = nh.advertise<std_msgs::Float64>("free_energy", 10);
+    // Publishers for beliefs
+    beliefs_mu_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu", 10);
+    beliefs_mu_p_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_p", 10);
+    beliefs_mu_pp_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_pp", 10);
 
     // Subscribers for proprioceptive sensors (i.e. from joint:states) and camera position (i.e. aruco_single/pose)
     sensorSub = nh.subscribe("joint_states", 1, &AIC::jointStatesCallback, this);
@@ -117,6 +121,11 @@
     DH_a << 0.0, 0.0, 0.0825, -0.0825, 0.0, 0.088, 0.0;
     DH_d << 0.333, 0.0, 0.316, 0.0, 0.384, 0.0, 0.107;
     DH_alpha << M_PI_2, -M_PI_2, M_PI_2, -M_PI_2, M_PI_2, M_PI_2, 0;
+
+    // Resize Float64MultiArray messages
+    AIC_mu.data.resize(7);
+    AIC_mu_p.data.resize(7);
+    AIC_mu_pp.data.resize(7);
   }
 
   void AIC::minimiseF(){
@@ -136,19 +145,27 @@
     mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p));
     mu_dot_pp = - k_mu*(SigmaP_muprime*(mu_pp+mu_p));
 
-    // Without camera for state estimation
-
-
     // Belifs update
     mu = mu + h*mu_dot;             // Belief about the position
     mu_p = mu_p + h*mu_dot_p;       // Belief about motion of mu
     mu_pp = mu_pp + h*mu_dot_pp;    // Belief about motion of mu'
+
+    // Publish beliefs as Float64MultiArray
+    for (int i=0;i<7;i++){
+       AIC_mu.data[i] = mu(i);
+       AIC_mu_p.data[i] = mu_p(i);
+       AIC_mu_pp.data[i] = mu_pp(i);
+    }
 
     // Calculate and send control actions
     AIC::computeActions();
 
     // Publish free-energy
     IFE_pub.publish(F);
+    // Publish beliefs
+    beliefs_mu_pub.publish(AIC_mu);
+    beliefs_mu_p_pub.publish(AIC_mu_p);
+    beliefs_mu_pp_pub.publish(AIC_mu_pp);
   }
 
   void   AIC::computeActions(){
@@ -179,7 +196,7 @@
       mu_d(i) = desiredPos[i];
     }
   }
-  
+
   // Compute the direct kinematics
   Eigen::Matrix<double, 4, 4> AIC::getEEPose(Eigen::Matrix<double, 7, 1> theta){
     // Initialize transformation matrix for the end effector DH_T

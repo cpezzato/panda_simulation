@@ -26,7 +26,10 @@
 			<cameraName>panda/camera1</cameraName>
 			<imageTopicName>image_raw</imageTopicName>
 			<cameraInfoTopicName>camera_info</cameraInfoTopicName>
-			<frameName>panda_camera_frame</frameName>
+			<frameName>panda_optical_frame</frameName>
+      <CxPrime>1224.5</CxPrime>
+      <Cx>1224.5</Cx>
+      <Cy>1025.5</Cy>
       <broadcastTF>true</broadcastTF>
 			<hackBaseline>0.0</hackBaseline>
 			<distortionK1>0.0</distortionK1>

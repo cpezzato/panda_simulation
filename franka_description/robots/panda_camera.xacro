@@ -30,6 +30,14 @@
     </inertial>
   </link>
 
+  <!--joint name="${ns}_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-pi/2} 0.0 ${-pi/2}" />
+      <parent link="${ns}_camera" />
+      <child link="${ns}_optical_frame"/>
+    </joint>
+
+    <link name="${ns}_optical_frame">
+    </link-->
   </xacro:macro>
 
 </robot>

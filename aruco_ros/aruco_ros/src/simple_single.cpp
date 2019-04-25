@@ -64,7 +64,7 @@ private:
   image_transport::Publisher image_pub;
   image_transport::Publisher debug_pub;
   ros::Publisher pose_pub;
-  ros::Publisher transform_pub; 
+  ros::Publisher transform_pub;
   ros::Publisher position_pub;
   ros::Publisher marker_pub; //rviz visualization marker
   ros::Publisher pixel_pub;
@@ -98,9 +98,9 @@ public:
     else if ( refinementMethod == "HARRIS" )
       mDetector.setCornerRefinementMethod(aruco::MarkerDetector::HARRIS);
     else if ( refinementMethod == "NONE" )
-      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::NONE); 
-    else      
-      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::LINES); 
+      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::NONE);
+    else
+      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::LINES);
 
     //Print parameters of aruco marker detector:
     ROS_INFO_STREAM("Corner refinement method: " << mDetector.getCornerRefinementMethod());
@@ -112,7 +112,7 @@ public:
     mDetector.getMinMaxSize(mins, maxs);
     ROS_INFO_STREAM("Marker size min: " << mins << "  max: " << maxs);
     ROS_INFO_STREAM("Desired speed: " << mDetector.getDesiredSpeed());
-    
+
 
 
     image_sub = it.subscribe("/image", 1, &ArucoSimple::image_callback, this);
@@ -228,9 +228,9 @@ public:
                            cameraToReference);
             }
 
-            transform = 
-              static_cast<tf::Transform>(cameraToReference) 
-              * static_cast<tf::Transform>(rightToLeft) 
+            transform =
+              static_cast<tf::Transform>(cameraToReference)
+              * static_cast<tf::Transform>(rightToLeft)
               * transform;
 
             tf::StampedTransform stampedTransform(transform, curr_stamp,

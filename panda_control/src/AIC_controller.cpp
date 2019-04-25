@@ -25,13 +25,13 @@ int main(int argc, char **argv)
   // Variable for desired position, set here the goal for the Panda for each joint
   std::vector<double> desiredPos(7);
 
-  desiredPos[0] = 0.0;
+  desiredPos[0] = 0.3;
   desiredPos[1] = 0.5;
   desiredPos[2] = 0.0;
   desiredPos[3] = -1.1;
   desiredPos[4] = 0.0;
   desiredPos[5] = 2;
-  desiredPos[6] = 0.0;
+  desiredPos[6] = 0;
 
   // Object of the class AIC which will take care of everything
   AIC AIC_controller;

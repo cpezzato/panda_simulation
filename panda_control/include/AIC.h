@@ -22,6 +22,7 @@
 #include <cmath>
 #include <sensor_msgs/JointState.h>
 #include "std_msgs/Float64.h"
+#include "std_msgs/Float64MultiArray.h"
 #include "geometry_msgs/PoseStamped.h"
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Dense>
@@ -97,6 +98,10 @@ private:
   // Variables for storing the generative model and the derivatives
   Eigen::Matrix<double, 3, 1> g, eev;
   Eigen::Matrix<double, 7, 1> gxprime, gyprime, gzprime;
+  // Definition of variables in order to publish the beliefs about the states
+  std_msgs::Float64MultiArray AIC_mu, AIC_mu_p, AIC_mu_pp;
+  // Publishers for beliefs
+  ros::Publisher beliefs_mu_pub, beliefs_mu_p_pub, beliefs_mu_pp_pub;
 };
 
 #endif
