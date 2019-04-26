@@ -6,11 +6,11 @@
 - Free-energy minimisation using proprioceptive and visual sensors
 - Active inferencve control
 - Model reference adaptive control
+- Fault detection for camera faults with offline threshold
 
 ## TODO
-- Fine tuning of the controllers (even though the performance are now accettable)
-- Include the camera input for state estimation (now the sensor is simulated using noisy data from the DK)
-- Fault detection (for these we need the dynamic model of the robot)
+- Camera calibration (now the sensor is simulated using noisy data from the DK)
+- Online Fault detection (for these we need the dynamic model of the robot)
 
 ## Description
 
