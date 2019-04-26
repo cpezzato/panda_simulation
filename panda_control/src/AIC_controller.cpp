@@ -22,6 +22,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "AIC_controller_node");
   // Variables to regulate the flow (Force to read once every 1ms the sensors)
   int count = 0;
+  int cycles = 0;
   // Variable for desired position, set here the goal for the Panda for each joint
   std::vector<double> desiredPos(7);
 
@@ -47,6 +48,13 @@ int main(int argc, char **argv)
     // Skip only first cycle to allow reading the sensory input first
     if ((count!=0)&&(AIC_controller.dataReady()==1)){
       AIC_controller.minimiseF();
+      cycles ++;
+      if (cycles == 15000){
+        AIC_controller.cameraFaultON();
+      }
+      if (cycles == 18000){
+        AIC_controller.cameraFaultOFF();
+      }
     }
     else
       count ++;

@@ -54,6 +54,9 @@ public:
   void setGoal(std::vector<double> desiredPos);
   // get end-effector position from direct kinematics
   Eigen::Matrix<double, 4, 4> getEEPose(Eigen::Matrix<double, 7, 1> theta);
+  // Inject a fault in the camera i.e. occlusion
+  void cameraFaultON();
+  void cameraFaultOFF();
 
 private:
   // Define variables for storing the end-effector position
@@ -104,6 +107,8 @@ private:
   std_msgs::Float64MultiArray AIC_mu, AIC_mu_p, AIC_mu_pp, SPE;
   // Publishers for beliefs
   ros::Publisher beliefs_mu_pub, beliefs_mu_p_pub, beliefs_mu_pp_pub, SPE_pub;
+  // Enable for faults (camFault == 1 if all good, camFault == 0 if occlusion)
+  int camFault;
 };
 
 #endif
