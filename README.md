@@ -7,11 +7,11 @@
 - Active inferencve control
 - Model reference adaptive control
 - Fault detection for camera faults with offline threshold
+- Fault recovery for camera faults
 
 ## TODO
 - Camera calibration (now the sensor is simulated using noisy data from the DK)
 - Online Fault detection (for these we need the dynamic model of the robot)
-- Fault recovery
 
 ## Description
 
