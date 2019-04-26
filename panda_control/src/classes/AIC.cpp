@@ -35,20 +35,26 @@
     }
 
     // Generative model and its derivative from object grnMod of the class generativeModel
-    g = genMod.getG(jointPos);
-    gxprime = genMod.getGxprime(jointPos);
-    gyprime = genMod.getGyprime(jointPos);
-    gzprime = genMod.getGzprime(jointPos);
+    g = genMod.getG(mu);
+    gxprime = genMod.getGxprime(mu);
+    gyprime = genMod.getGyprime(mu);
+    gzprime = genMod.getGzprime(mu);
 
     // Simulate camera input from direct kinematics
-    eev(0) = g(0) + 0.01*(((double) rand() / (RAND_MAX)));
-    eev(1) = g(1) + 0.01*(((double) rand() / (RAND_MAX)));
-    eev(2) = g(2) + 0.01*(((double) rand() / (RAND_MAX)));
+    // eev(0) = g(0) + 0.01*(((double) rand() / (RAND_MAX)));
+    // eev(1) = g(1) + 0.01*(((double) rand() / (RAND_MAX)));
+    // eev(2) = g(2) + 0.01*(((double) rand() / (RAND_MAX)));
     //std::cout << eev(1)-g(1) << std::endl;
-    //T = AIC::getEEPose(jointPos);
+
+    // Simulate camera with 1cm uncertainty in every direction
+    T = AIC::getEEPose(jointPos);
+    eev(0) = T(0,3) + 0.01*(2*((double) rand() / (RAND_MAX))-1);
+    eev(1) = T(1,3) + 0.01*(2*((double) rand() / (RAND_MAX))-1);
+    eev(2) = T(2,3) + 0.01*(2*((double) rand() / (RAND_MAX))-1);
     //std::cout << T(0,3)-g(0) << std::endl;
     //std::cout << T(1,3)-g(1) << std::endl;
     //std::cout << T(2,3)-g(2) << std::endl;
+    // std::cout << 2*((double) rand() / (RAND_MAX))-1 << std::endl;
   }
 
   void   AIC::cameraCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
@@ -68,8 +74,11 @@
     tauPub5 = nh.advertise<std_msgs::Float64>("/panda_joint5_controller/command", 20);
     tauPub6 = nh.advertise<std_msgs::Float64>("/panda_joint6_controller/command", 20);
     tauPub7 = nh.advertise<std_msgs::Float64>("/panda_joint7_controller/command", 20);
-    // Publisher for the free-energy
-    IFE_pub = nh.advertise<std_msgs::Float64>("free_energy", 10);
+    // Publisher for the free-energy and sensory prediction errors
+    IFE_pub = nh.advertise<std_msgs::Float64>("panda_free_energy", 10);
+    thresholdSPE_pub = nh.advertise<std_msgs::Float64>("panda_threshold_SPE", 10);
+    SPE_pub = nh.advertise<std_msgs::Float64MultiArray>("panda_SPE", 10);
+
     // Publishers for beliefs
     beliefs_mu_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu", 10);
     beliefs_mu_p_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_p", 10);
@@ -87,7 +96,7 @@
     var_muprime = 1.0;
     var_q = 0.1;
     var_qdot = 0.1;
-    var_eev = 1.0;
+    var_eev = 50.0;
 
     // Learning rates for the gradient descent
     k_mu = 20;
@@ -117,6 +126,9 @@
     // Integration step
     h = 0.001;
 
+    // Uncertainty for the threshold (5*1 cm)
+    deltaM = 5*0.01;
+
     // Initialization of the DH parameters
     DH_a << 0.0, 0.0, 0.0825, -0.0825, 0.0, 0.088, 0.0;
     DH_d << 0.333, 0.0, 0.316, 0.0, 0.384, 0.0, 0.107;
@@ -126,22 +138,24 @@
     AIC_mu.data.resize(7);
     AIC_mu_p.data.resize(7);
     AIC_mu_pp.data.resize(7);
+    SPE.data.resize(3);
   }
 
   void AIC::minimiseF(){
     // Compute single sensory prediction errors
     SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
     SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);
-    SPEv = var_eev*((eev(0)-g(0))*(eev(0)-g(0))+(eev(1)-g(1))*(eev(1)-g(1))+(eev(2)-g(2))*(eev(2)-g(2)));
+    SPEv = (1/var_eev)*((eev(0)-g(0))*(eev(0)-g(0))+(eev(1)-g(1))*(eev(1)-g(1))+(eev(2)-g(2))*(eev(2)-g(2)));
     SPEmu_p = (mu_p.transpose()+mu.transpose()-mu_d.transpose())*SigmaP_mu*(mu_p+mu-mu_d);
     SPEmu_pp = (mu_pp.transpose()+mu_p.transpose())*SigmaP_muprime*(mu_pp+mu_p);
 
     // Free-energy as a sum of squared values (i.e. sum the SPE)
     F.data = SPEq + SPEdq + SPEv + SPEmu_p + SPEmu_pp;
-    //ROS_INFO("%f", F);
-
+    // Set the threshold for fault detection
+    thresholdSPE.data = SPEv + (3/var_eev)*deltaM + 2*pow((deltaM/var_eev)*((eev(0)-g(0))+(eev(1)-g(1))+(eev(2)-g(2))),2);
     // Free-energy minimization using gradient descent and beliefs update
     mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d)-SigmaP_yv0*(eev(0)-g(0))*gxprime -SigmaP_yv0*(eev(1)-g(1))*gyprime -SigmaP_yv0*(eev(2)-g(2))*gzprime);
+    //mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
     mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p));
     mu_dot_pp = - k_mu*(SigmaP_muprime*(mu_pp+mu_p));
 
@@ -156,12 +170,23 @@
        AIC_mu_p.data[i] = mu_p(i);
        AIC_mu_pp.data[i] = mu_pp(i);
     }
+    // Define SPE message
+    SPE.data[0] = SPEq;
+    SPE.data[1] = SPEdq;
+    SPE.data[2] = SPEv;
 
     // Calculate and send control actions
     AIC::computeActions();
 
     // Publish free-energy
     IFE_pub.publish(F);
+
+    // Publish threshold for SPE
+    thresholdSPE_pub.publish(thresholdSPE);
+
+    // Sensory prediction error publisher
+    SPE_pub.publish(SPE);
+
     // Publish beliefs
     beliefs_mu_pub.publish(AIC_mu);
     beliefs_mu_p_pub.publish(AIC_mu_p);

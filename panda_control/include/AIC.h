@@ -82,12 +82,12 @@ private:
   int dataReceived;
   // ROS related Variables, node handle
   ros::NodeHandle nh;
-  // Publishers for joint torques to the topics /panda_joint*_controller/command
-  ros::Publisher tauPub1, tauPub2, tauPub3, tauPub4, tauPub5, tauPub6, tauPub7, IFE_pub;
+  // Publishers for joint torques to the topics /panda_joint*_controller/command, the free-energy and a threshold for it
+  ros::Publisher tauPub1, tauPub2, tauPub3, tauPub4, tauPub5, tauPub6, tauPub7, IFE_pub, thresholdSPE_pub;
   // Subscriber for proprioceptive sensors (i.e. from joint_states) and camera (i.e. aruco_single/pose)
   ros::Subscriber sensorSub, cameraSub;
   // Support variables to contain the torques for the joints
-  std_msgs::Float64 tau1, tau2, tau3, tau4, tau5, tau6, tau7, F;
+  std_msgs::Float64 tau1, tau2, tau3, tau4, tau5, tau6, tau7, F, thresholdSPE;
   // Values for direct kinematics computation using DH parameters
   Eigen::Matrix<double, 7, 1> DH_a, DH_d, DH_alpha;
   Eigen::Matrix<double, 4, 4> DH_T, DH_A, T;
@@ -98,10 +98,12 @@ private:
   // Variables for storing the generative model and the derivatives
   Eigen::Matrix<double, 3, 1> g, eev;
   Eigen::Matrix<double, 7, 1> gxprime, gyprime, gzprime;
-  // Definition of variables in order to publish the beliefs about the states
-  std_msgs::Float64MultiArray AIC_mu, AIC_mu_p, AIC_mu_pp;
+  // Variables for uncertaintied for the threshold definition
+  double deltaM;
+  // Definition of variables in order to publish the beliefs about the states and the sensory prediction errors
+  std_msgs::Float64MultiArray AIC_mu, AIC_mu_p, AIC_mu_pp, SPE;
   // Publishers for beliefs
-  ros::Publisher beliefs_mu_pub, beliefs_mu_p_pub, beliefs_mu_pp_pub;
+  ros::Publisher beliefs_mu_pub, beliefs_mu_p_pub, beliefs_mu_pp_pub, SPE_pub;
 };
 
 #endif
