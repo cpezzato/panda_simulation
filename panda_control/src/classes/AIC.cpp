@@ -56,7 +56,7 @@
       eev(1) = T(1,3) + 0.01*(2*((double) rand() / (RAND_MAX))-1);
       eev(2) = T(2,3) + 0.01*(2*((double) rand() / (RAND_MAX))-1);
     }
-      std::cout << eev(0)-T(0,3) << '\n';
+      // std::cout << eev(0)-T(0,3) << '\n';
   }
 
   void   AIC::cameraCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
@@ -94,6 +94,9 @@
     dataReceived = 0;
     // Set no faults at the beginning for the camera
     camFault = 1;
+    // Set flag for fault to 0 and for recovered
+    faultDetected = 0;
+    recovered = 0;
 
     // Variances associated with the beliefs and the sensory inputs
     var_mu = 1.0;
@@ -146,6 +149,16 @@
   }
 
   void AIC::minimiseF(){
+
+    // Check if a fault has been detected
+    if (faultDetected && !recovered){
+       // set to high value so the influence is really small
+       var_eev = var_eev*100000;
+       SigmaP_yv0 = Eigen::Matrix<double, 7, 7>::Zero();
+       // set the flag "recovered to skip this next"
+       recovered = 1;
+     }
+    std::cout << recovered << '\n';
     // Compute single sensory prediction errors
     SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
     SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);
@@ -153,11 +166,16 @@
     SPEmu_p = (mu_p.transpose()+mu.transpose()-mu_d.transpose())*SigmaP_mu*(mu_p+mu-mu_d);
     SPEmu_pp = (mu_pp.transpose()+mu_p.transpose())*SigmaP_muprime*(mu_pp+mu_p);
 
-
     // Free-energy as a sum of squared values (i.e. sum the SPE)
     F.data = SPEq + SPEdq + SPEv + SPEmu_p + SPEmu_pp;
     // Set the threshold for fault detection
     thresholdSPE.data = SPEv + (3/var_eev)*deltaM + 2*abs((deltaM/var_eev)*((eev(0)-g(0))+(eev(1)-g(1))+(eev(2)-g(2))));
+
+    // Check if the threshold is exceeded (offline here)
+    if (SPEv > 0.03){
+      faultDetected = 1;
+    }
+    //std::cout << faultDetected << '\n';
     // Free-energy minimization using gradient descent and beliefs update
     mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d)-SigmaP_yv0*(eev(0)-g(0))*gxprime -SigmaP_yv0*(eev(1)-g(1))*gyprime -SigmaP_yv0*(eev(2)-g(2))*gzprime);
     //mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
@@ -201,8 +219,6 @@
   void   AIC::computeActions(){
     // Compute control actions through gradient descent of F
     u = u-h*k_a*(SigmaP_yq1*(jointVel-mu_p)+SigmaP_yq0*(jointPos-mu));
-
-    //SigmaP_yv0_real*(y.eev-[g.gx; g.gy])
 
     // Set the toques from u and publish
     tau1.data = u(0); tau2.data = u(1); tau3.data = u(2); tau4.data = u(3);

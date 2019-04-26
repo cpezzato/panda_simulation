@@ -49,12 +49,12 @@ int main(int argc, char **argv)
     if ((count!=0)&&(AIC_controller.dataReady()==1)){
       AIC_controller.minimiseF();
       cycles ++;
-      if (cycles == 15000){
+      if (cycles == 5000){
         AIC_controller.cameraFaultON();
       }
-      if (cycles == 18000){
+      /*if (cycles == 8000){
         AIC_controller.cameraFaultOFF();
-      }
+      }*/
     }
     else
       count ++;

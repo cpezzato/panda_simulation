@@ -109,6 +109,8 @@ private:
   ros::Publisher beliefs_mu_pub, beliefs_mu_p_pub, beliefs_mu_pp_pub, SPE_pub;
   // Enable for faults (camFault == 1 if all good, camFault == 0 if occlusion)
   int camFault;
+  // Flags
+  int faultDetected, recovered;
 };
 
 #endif
