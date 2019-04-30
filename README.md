@@ -55,7 +55,5 @@ The launch file launches a Gazebo simulation in pause. You can then run the node
 - `$ rosrun panda_control panda_control_AIC` 
 - Then *play* in the Gazebo GUI
 
-The result with any of the two controllers is the following:
-<p align="center">
-<img src="https://user-images.githubusercontent.com/49310726/56719843-cf4d5e00-6741-11e9-8a62-ed898c4ddee4.png" width="326" height="219">
-</p>
+The result with the active inference controller is the following:
+![result](docs/images/AIC.gif)
