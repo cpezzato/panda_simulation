@@ -56,4 +56,4 @@ The launch file launches a Gazebo simulation in pause. You can then run the node
 - Then *play* in the Gazebo GUI
 
 The result with the active inference controller is the following:
-![result](docs/images/AIC.gif)
+![AIC](https://user-images.githubusercontent.com/49310726/56992707-f02b0e80-6b9a-11e9-99fd-58a31f114d0e.gif)
