@@ -158,7 +158,7 @@
        // set the flag "recovered to skip this next"
        recovered = 1;
      }
-    std::cout << recovered << '\n';
+    // std::cout << recovered << '\n';
     // Compute single sensory prediction errors
     SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
     SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);

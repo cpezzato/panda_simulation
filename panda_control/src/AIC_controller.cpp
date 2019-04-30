@@ -24,20 +24,36 @@ int main(int argc, char **argv)
   int count = 0;
   int cycles = 0;
   // Variable for desired position, set here the goal for the Panda for each joint
-  std::vector<double> desiredPos(7);
+  std::vector<double> desiredPos1(7), desiredPos2(7), desiredPos3(7);
 
-  desiredPos[0] = 0.3;
-  desiredPos[1] = 0.5;
-  desiredPos[2] = 0.0;
-  desiredPos[3] = -1.1;
-  desiredPos[4] = 0.0;
-  desiredPos[5] = 2;
-  desiredPos[6] = 0;
+  desiredPos1[0] = 1;
+  desiredPos1[1] = 0.5;
+  desiredPos1[2] = 0.0;
+  desiredPos1[3] = -2;
+  desiredPos1[4] = 0.0;
+  desiredPos1[5] = 2.5;
+  desiredPos1[6] = 0.0;
+
+  desiredPos2[0] = 0.0;
+  desiredPos2[1] = 0.0;
+  desiredPos2[2] = 0.0;
+  desiredPos2[3] = -1.0;
+  desiredPos2[4] = 0.0;
+  desiredPos2[5] = 1.2;
+  desiredPos2[6] = 0.0;
+
+  desiredPos3[0] = -1;
+  desiredPos3[1] = 0.5;
+  desiredPos3[2] = 0.0;
+  desiredPos3[3] = -1.1;
+  desiredPos3[4] = 0.0;
+  desiredPos3[5] = 1.6;
+  desiredPos3[6] = 0;
 
   // Object of the class AIC which will take care of everything
   AIC AIC_controller;
   // Set desired position in the AIC class
-  AIC_controller.setGoal(desiredPos);
+  AIC_controller.setGoal(desiredPos1);
 
   // Main loop
   ros::Rate rate(1000);
@@ -50,11 +66,25 @@ int main(int argc, char **argv)
       AIC_controller.minimiseF();
       cycles ++;
       if (cycles == 5000){
-        AIC_controller.cameraFaultON();
+        //AIC_controller.cameraFaultON();
+        AIC_controller.setGoal(desiredPos2);
       }
-      /*if (cycles == 8000){
-        AIC_controller.cameraFaultOFF();
-      }*/
+
+      if (cycles == 7500){
+        //AIC_controller.cameraFaultOFF();
+        AIC_controller.setGoal(desiredPos3);
+      }
+
+      if (cycles == 12500){
+        //AIC_controller.cameraFaultOFF();
+        AIC_controller.setGoal(desiredPos2);
+      }
+
+      if (cycles == 15000){
+        //AIC_controller.cameraFaultOFF();
+        AIC_controller.setGoal(desiredPos1);
+        cycles = 0;
+      }
     }
     else
       count ++;

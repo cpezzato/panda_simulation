@@ -27,16 +27,15 @@
 			<imageTopicName>image_raw</imageTopicName>
 			<cameraInfoTopicName>camera_info</cameraInfoTopicName>
 			<frameName>panda_optical_frame</frameName>
-      <CxPrime>1224.5</CxPrime>
-      <Cx>1224.5</Cx>
-      <Cy>1025.5</Cy>
+      <Cx>0</Cx>
+      <Cy>0</Cy>
       <broadcastTF>true</broadcastTF>
 			<hackBaseline>0.0</hackBaseline>
-			<distortionK1>0.0</distortionK1>
-			<distortionK2>0.0</distortionK2>
-			<distortionK3>0.0</distortionK3>
-			<distortionT1>0.0</distortionT1>
-			<distortionT2>0.0</distortionT2>
+			<distortionK1>0.000000001</distortionK1>
+			<distortionK2>0.000000001</distortionK2>
+			<distortionK3>0.000000001</distortionK3>
+			<distortionT1>0.000000001</distortionT1>
+			<distortionT2>0.000000001</distortionT2>
 	      	</plugin>
     	</sensor>
     </gazebo>

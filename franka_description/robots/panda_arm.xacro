@@ -11,8 +11,6 @@
 
     <xacro:property name="joint_damping" value="1.0"/>
 
-    <link name="world" />
-
     <joint name="robot_to_world" type="fixed">
       <parent link="world" />
       <child link="${arm_id}_link0" />
@@ -235,7 +233,7 @@
       <dynamics damping="100"/>
     </joint>
 
-    <link name="marker_link">
+    <!--link name="marker_link">
     <visual>
       <geometry>
           <mesh filename="package://${description_pkg}/meshes/visual/marker.dae" scale="1 1 0.001"/>
@@ -247,7 +245,7 @@
     <origin rpy="0 0 0" xyz="0 0 0.0011"/>
     <parent link="panda_link8"/>
     <child link="marker_link"/>
-  </joint>
+  </joint-->
 
   </xacro:macro>
 
