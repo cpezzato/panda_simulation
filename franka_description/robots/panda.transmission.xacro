@@ -7,7 +7,7 @@
         <gazebo>
             <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
                 <!-- <robotNamespace>/${robot_name}</robotNamespace> -->
- 		<legacyModeNS>true</legacyModeNS>
+ 		             <legacyModeNS>false</legacyModeNS>
             </plugin>
         </gazebo>
 

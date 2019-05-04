@@ -35,7 +35,7 @@ class AIC
 {
 public:
   // Constructor and destructor
-  AIC();
+  AIC(int whichRobot);
   ~AIC();
 
   // Callback to handle the proprioceptive sensory data from the topic /joint_states published at 1kHz
@@ -57,6 +57,11 @@ public:
   // Inject a fault in the camera i.e. occlusion
   void cameraFaultON();
   void cameraFaultOFF();
+  // get methods for sensory prediction errors and for faulr detection threshold
+  std_msgs::Float64MultiArray getSPE();
+  double getThreshold();
+  // Methof for recovery from a fault
+  void recoveryCameraFault();
 
 private:
   // Define variables for storing the end-effector position

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+    <!-- GAZEBO arguments -->
+    <arg name="paused" default="true"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+    <arg name="load_gripper" default="false"/>
+
+    <!--launch GAZEBO with own world configuration -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <!--arg name="world_name" value="$(find franka_gazebo)/worlds/my_world.world"/-->
+      	<arg name="debug" value="$(arg debug)"/>
+        <arg name="gui" value="$(arg gui)"/>
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+    </include>
+
+    <!-- Robots -->
+    <!-- Load joint effort controller configurations from YAML file to parameter server -->
+    <group ns="/robot1">
+        <param name="tf_prefix" value="panda1" />
+        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_description)/robots/panda_arm_camera.urdf.xacro"/>
+        <rosparam file="$(find panda_simulation)/config/panda_control.yaml" command="load" ns="/robot1"/>
+
+        <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+          args="-param robot_description -urdf -model robot1
+          -J panda_joint1 0
+          -J panda_joint2 0
+          -J panda_joint3 0
+          -J panda_joint4 0
+          -J panda_joint5 0
+          -J panda_joint6 0
+          -J panda_joint7 0"/>
+
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="
+          --namespace=/robot1
+          joint_state_controller
+          panda_joint1_controller panda_joint2_controller
+          panda_joint3_controller panda_joint4_controller
+          panda_joint5_controller panda_joint6_controller panda_joint7_controller" />
+
+        <!-- convert joint states to TF transforms for rviz, etc -->
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+    </group>
+
+    <!-- Launch robot control node -->
+    <!--node pkg="panda_control" type="panda_control_AIC" name="panda_control_AIC" /-->
+    <!--Record data, change destination according to your account-->
+    <!--node pkg="rosbag" type="record" args="-o /home/corrado/Desktop/rosbag/
+        /free_energy
+        /joint_states /beliefs_mu
+        /beliefs_mu_p
+        /beliefs_mu_pp
+        /threshold_free_energy
+    " name="record" output="screen"/-->
+
+</launch>

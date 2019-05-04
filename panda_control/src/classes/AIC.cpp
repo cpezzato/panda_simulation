@@ -12,7 +12,50 @@
 #include "AIC.h"
 
   // Constructor which takes as argument the publishers and initialises the private ones in the class
-  AIC::AIC(){
+  AIC::AIC(int whichRobot){
+
+    if (whichRobot == 1){
+      // Initialize publishers on the topics /robot1/panda_joint*_controller/command for the joint efforts
+      tauPub1 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint1_controller/command", 20);
+      tauPub2 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint2_controller/command", 20);
+      tauPub3 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint3_controller/command", 20);
+      tauPub4 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint4_controller/command", 20);
+      tauPub5 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint5_controller/command", 20);
+      tauPub6 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint6_controller/command", 20);
+      tauPub7 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint7_controller/command", 20);
+      sensorSub = nh.subscribe("/robot1/joint_states", 1, &AIC::jointStatesCallback, this);
+      // Publisher for the free-energy and sensory prediction errors
+      IFE_pub = nh.advertise<std_msgs::Float64>("panda_free_energy", 10);
+      thresholdSPE_pub = nh.advertise<std_msgs::Float64>("panda_threshold_SPE", 10);
+      SPE_pub = nh.advertise<std_msgs::Float64MultiArray>("panda_SPE", 10);
+
+      // Publishers for beliefs
+      beliefs_mu_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu", 10);
+      beliefs_mu_p_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_p", 10);
+      beliefs_mu_pp_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_pp", 10);
+    }
+    else{
+      // Initialize publishers on the topics /robot2/panda_joint*_controller/command for the joint efforts
+      tauPub1 = nh.advertise<std_msgs::Float64>("/robot2/panda_joint1_controller/command", 20);
+      tauPub2 = nh.advertise<std_msgs::Float64>("/robot2/panda_joint2_controller/command", 20);
+      tauPub3 = nh.advertise<std_msgs::Float64>("/robot2/panda_joint3_controller/command", 20);
+      tauPub4 = nh.advertise<std_msgs::Float64>("/robot2/panda_joint4_controller/command", 20);
+      tauPub5 = nh.advertise<std_msgs::Float64>("/robot2/panda_joint5_controller/command", 20);
+      tauPub6 = nh.advertise<std_msgs::Float64>("/robot2/panda_joint6_controller/command", 20);
+      tauPub7 = nh.advertise<std_msgs::Float64>("/robot2/panda_joint7_controller/command", 20);
+      sensorSub = nh.subscribe("/robot2/joint_states", 1, &AIC::jointStatesCallback, this);
+      // Publisher for the free-energy and sensory prediction errors
+      IFE_pub = nh.advertise<std_msgs::Float64>("model_free_energy", 10);
+      thresholdSPE_pub = nh.advertise<std_msgs::Float64>("model_threshold_SPE", 10);
+      SPE_pub = nh.advertise<std_msgs::Float64MultiArray>("model_SPE", 10);
+    }
+      // Publishers for beliefs
+      beliefs_mu_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu", 10);
+      beliefs_mu_p_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_p", 10);
+      beliefs_mu_pp_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_pp", 10);
+
+    // Subscribers for proprioceptive sensors (i.e. from joint:states) and camera position (i.e. aruco_single/pose)
+    cameraSub = nh.subscribe("aruco_single/pose", 1, &AIC::cameraCallback, this);
     // Initialize the variables for thr AIC
     AIC::initVariables();
   }
@@ -68,27 +111,6 @@
   }
 
   void   AIC::initVariables(){
-    // Initialize publishers on the topics /panda_joint*_controller/command for the joint efforts
-    tauPub1 = nh.advertise<std_msgs::Float64>("/panda_joint1_controller/command", 20);
-    tauPub2 = nh.advertise<std_msgs::Float64>("/panda_joint2_controller/command", 20);
-    tauPub3 = nh.advertise<std_msgs::Float64>("/panda_joint3_controller/command", 20);
-    tauPub4 = nh.advertise<std_msgs::Float64>("/panda_joint4_controller/command", 20);
-    tauPub5 = nh.advertise<std_msgs::Float64>("/panda_joint5_controller/command", 20);
-    tauPub6 = nh.advertise<std_msgs::Float64>("/panda_joint6_controller/command", 20);
-    tauPub7 = nh.advertise<std_msgs::Float64>("/panda_joint7_controller/command", 20);
-    // Publisher for the free-energy and sensory prediction errors
-    IFE_pub = nh.advertise<std_msgs::Float64>("panda_free_energy", 10);
-    thresholdSPE_pub = nh.advertise<std_msgs::Float64>("panda_threshold_SPE", 10);
-    SPE_pub = nh.advertise<std_msgs::Float64MultiArray>("panda_SPE", 10);
-
-    // Publishers for beliefs
-    beliefs_mu_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu", 10);
-    beliefs_mu_p_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_p", 10);
-    beliefs_mu_pp_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_pp", 10);
-
-    // Subscribers for proprioceptive sensors (i.e. from joint:states) and camera position (i.e. aruco_single/pose)
-    sensorSub = nh.subscribe("joint_states", 1, &AIC::jointStatesCallback, this);
-    cameraSub = nh.subscribe("aruco_single/pose", 1, &AIC::cameraCallback, this);
 
     // Support variable
     dataReceived = 0;
@@ -150,14 +172,6 @@
 
   void AIC::minimiseF(){
 
-    // Check if a fault has been detected
-    if (faultDetected && !recovered){
-       // set to high value so the influence is really small
-       var_eev = var_eev*100000;
-       SigmaP_yv0 = Eigen::Matrix<double, 7, 7>::Zero();
-       // set the flag "recovered to skip this next"
-       recovered = 1;
-     }
     // std::cout << recovered << '\n';
     // Compute single sensory prediction errors
     SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
@@ -265,4 +279,19 @@
   }
   void AIC::cameraFaultOFF(){
     camFault = 1;
+  }
+
+  std_msgs::Float64MultiArray  AIC::getSPE(){
+    return(SPE);
+  }
+  double  AIC::getThreshold(){
+    return(thresholdSPE.data);
+  }
+  // Methof for recovery from a fault
+  void AIC::recoveryCameraFault(){
+    ROS_INFO("Elia gay");
+    var_eev = var_eev*100000;
+    SigmaP_yv0 = Eigen::Matrix<double, 7, 7>::Zero();
+    // set the flag "recovered to skip this next"
+    recovered = 1;
   }
