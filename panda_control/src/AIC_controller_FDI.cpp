@@ -82,18 +82,19 @@ int main(int argc, char **argv)
       FD_threshold = AIC_model.getThreshold();
       // Select the SPE relative to the camera
       SPEv = SPEreal.data[2];
-      std::cout << "Residual" << '\n';
-      std::cout << FD_threshold - SPEv << '\n';
+      //std::cout << "Residual" << '\n';
+      //std::cout << FD_threshold - SPEv << '\n';
+
       // Pefrom fault detection
       if(SPEv > FD_threshold){
           ROS_WARN("A fault in the camera has been detected and a recovery action taken");
-          AIC_realRobot.recoveryCameraFault();
+          //AIC_realRobot.recoveryCameraFault();
       }
       // Cycles counter
       cycles ++;
 
       if (cycles == 5000){
-        AIC_realRobot.cameraFaultON();
+        //AIC_realRobot.cameraFaultON();
         AIC_realRobot.setGoal(desiredPos2);
         AIC_model.setGoal(desiredPos2);
       }

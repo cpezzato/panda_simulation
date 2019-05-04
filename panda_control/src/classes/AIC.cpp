@@ -121,13 +121,13 @@
     recovered = 0;
 
     // Variances associated with the beliefs and the sensory inputs
-    var_mu = 1.0;
-    var_muprime = 1.0;
-    var_q = 0.1;
-    var_qdot = 0.1;
-    var_eev = 1.0;
+    var_mu = 5.0;
+    var_muprime = 5.0;
+    var_q = 1;
+    var_qdot = 1;
+    var_eev = 5.0;
 
-    // Learning rates for the gradient descent
+    // Learning rates for the gradient descent (found that a ratio of 60 works good)
     k_mu = 20;
     k_a = 1200;
 

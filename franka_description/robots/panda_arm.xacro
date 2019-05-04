@@ -1,5 +1,48 @@
 <?xml version='1.0' encoding='utf-8'?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
+
+  <!-- This masses are incorrect on purpose, off by 20% w.r.t the model-->
+
+  <xacro:property name="mass_link0" value="3.66357" />
+  <xacro:property name="mass_link1" value="2.04471" />
+  <xacro:property name="mass_link2" value="2.56414" />
+  <xacro:property name="mass_link3" value="2.48050" />
+  <xacro:property name="mass_link4" value="2.02754" />
+  <xacro:property name="mass_link5" value="3.09611" />
+  <xacro:property name="mass_link6" value="1.66736" />
+  <xacro:property name="mass_link7" value="0.75606" />
+  <xacro:property name="mass_link8" value="0.1" />
+
+  <xacro:property name="link0_cog" value="-0.029190 -0.000879 0.056603" />
+  <xacro:property name="link1_cog" value="0.000011 -0.031266 -0.069373" />
+  <xacro:property name="link2_cog" value="-0.000013 -0.070322 0.031178" />
+  <xacro:property name="link3_cog" value="0.044348 0.024928 -0.038130" />
+  <xacro:property name="link4_cog" value="-0.038550 0.039526 0.024716" />
+  <xacro:property name="link5_cog" value="-0.000064 0.038412 -0.109970" />
+  <xacro:property name="link6_cog" value="0.051002 0.006933 0.006169" />
+  <xacro:property name="link7_cog" value="0.010361 0.010360 0.079108" />
+
+  <!-- Correct masses
+  <xacro:property name="mass_link0" value="3.06357" />
+  <xacro:property name="mass_link1" value="2.34471" />
+  <xacro:property name="mass_link2" value="2.36414" />
+  <xacro:property name="mass_link3" value="2.38050" />
+  <xacro:property name="mass_link4" value="2.42754" />
+  <xacro:property name="mass_link5" value="3.49611" />
+  <xacro:property name="mass_link6" value="1.46736" />
+  <xacro:property name="mass_link7" value="0.45606" />
+  <xacro:property name="mass_link8" value="0.001" /> -->
+
+    <xacro:macro name="cylinder_inertial" params="radius length mass *origin">
+      <inertial>
+        <mass value="${mass}" />
+        <xacro:insert_block name="origin" />
+        <inertia ixx="${0.0833333 * mass * (3 * radius * radius + length * length)}" ixy="0.0" ixz="0.0"
+          iyy="${0.0833333 * mass * (3 * radius * radius + length * length)}" iyz="0.0"
+          izz="${0.5 * mass * radius * radius}" />
+      </inertial>
+  </xacro:macro>
+
   <xacro:macro name="panda_arm" params="arm_id:='panda' description_pkg:='franka_description' connected_to:='' xyz:='0 0 0' rpy:='0 0 0'">
     <xacro:unless value="${not connected_to}">
       <joint name="${arm_id}_joint_${connected_to}" type="fixed">
@@ -30,9 +73,9 @@
         </geometry>
       </collision>
       <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="3.06"/>
-        <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
+        <origin xyz="${link0_cog}" rpy="0 0 0"/>
+        <mass value="${mass_link0}"/>
+        <inertia ixx="0.009" iyy="0.0122" izz="0.0122" ixy="0.0" ixz="-0.00010" iyz="0.0"/>
       </inertial>
     </link>
     <link name="${arm_id}_link1">
@@ -47,9 +90,9 @@
         </geometry>
       </collision>
       <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="2.34"/>
-        <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
+        <origin xyz="${link1_cog}" rpy="0 0 0"/>
+        <mass value="${mass_link1}"/>
+        <inertia ixx="0.01418" iyy="0.01181" izz="0.005515" ixy="0.0" ixz="0.0" iyz="0.00236"/>
       </inertial>
     </link>
     <joint name="${arm_id}_joint1" type="revolute">
@@ -73,9 +116,9 @@
         </geometry>
       </collision>
       <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="2.36"/>
-        <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
+        <origin xyz="${link2_cog}" rpy="0 0 0"/>
+        <mass value="${mass_link2}"/>
+        <inertia ixx="0.014" ixy="0.0" ixz="0.0" iyy="0.0055" iyz="-0.0023" izz="0.01259"/>
       </inertial>
     </link>
     <joint name="${arm_id}_joint2" type="revolute">
@@ -99,9 +142,9 @@
         </geometry>
       </collision>
       <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="2.38"/>
-        <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
+        <origin xyz="${link3_cog}" rpy="0 0 0"/>
+        <mass value="${mass_link3}"/>
+        <inertia ixx="0.00716" ixy="-0.00102" ixz="-0.02040" iyy="0.00920" iyz="-0.00102" izz="0.007159"/>
       </inertial>
     </link>
     <joint name="${arm_id}_joint3" type="revolute">
@@ -125,9 +168,9 @@
         </geometry>
       </collision>
       <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="2.43"/>
-        <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
+        <origin xyz="${link4_cog}" rpy="0 0 0"/>
+        <mass value="${mass_link4}"/>
+        <inertia ixx="0.008164" ixy="0.003061" ixz="0.00102" iyy="0.008165" iyz="0.00102" izz="0.009185"/>
       </inertial>
     </link>
     <joint name="${arm_id}_joint4" type="revolute">
@@ -151,9 +194,9 @@
         </geometry>
       </collision>
       <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="3.5"/>
-        <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
+        <origin xyz="${link5_cog}" rpy="0 0 0"/>
+        <mass value="${mass_link5}"/>
+        <inertia ixx="0.0307" ixy="0.0" ixz="0.0" iyy="0.02761" iyz="-0.0613" izz="0.00818"/>
       </inertial>
     </link>
     <joint name="${arm_id}_joint5" type="revolute">
@@ -177,9 +220,9 @@
         </geometry>
       </collision>
       <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="1.47"/>
-        <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
+        <origin xyz="${link6_cog}" rpy="0 0 0"/>
+        <mass value="${mass_link6}"/>
+        <inertia ixx="0.00205" ixy="0.0" ixz="0.0" iyy="0.004089" iyz="0" izz="0.00490"/>
       </inertial>
     </link>
     <joint name="${arm_id}_joint6" type="revolute">
@@ -204,7 +247,7 @@
       </collision>
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.45"/>
+        <mass value="${mass_link7}"/>
         <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
       </inertial>
     </link>
@@ -220,7 +263,7 @@
     <link name="${arm_id}_link8">
       <inertial>
         <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="0.001"/>
+        <mass value="${mass_link8}"/>
         <inertia ixx="0.3" ixy="0.0" ixz="0.0" iyy="0.3" iyz="0.0" izz="0.3"/>
       </inertial>
     </link>
