@@ -6,12 +6,10 @@
 - Free-energy minimisation using proprioceptive and visual sensors
 - Active inferencve control
 - Model reference adaptive control
-- Fault detection for camera faults with offline threshold
-- Fault recovery for camera faults
+- Fault detection and recovery for camera faults with online threshold
 
 ## TODO
 - Camera calibration (now the sensor is simulated using noisy data from the DK)
-- Online Fault detection (for these we need the dynamic model of the robot)
 
 ## Description
 
@@ -45,12 +43,13 @@ Once inside the image:
 
 - Source: `$ source /opt/ros/kinetic/setup.bash` 
 - Create a folder for your catkin_ws: `$ mkdir -p your_catkin_ws/` <br /> 
+- Move to the folder: $ cd your_catkin_ws/` <br /> 
 - Clone the repository `$ git clone https://github.com/cpezzato/panda_simulation.git src` <br /> 
 - Build the workspace: `$ catkin_make` <br /> 
 - Source: `$ source devel/setup.bash` <br /> 
-- Launch: `$ roslaunch panda_simulation simulation.launch`
+- Launch: `$ roslaunch panda_simulation simulation_single.launch`
 
-The launch file launches a Gazebo simulation in pause. You can then run the node *panda_control_AIC* for the active inference controller (AIC) and play the simulation to see the robot moving to the set-point. Alternatively one can run the model reference adaptive controller (MRAC) through the node *panda_control_MRAC*. 
+The launch file launches a Gazebo simulation in pause with a single robot. You can then run the node *panda_control_AIC_single* for the active inference controller (AIC) and play the simulation to see the robot moving to the set-point. Alternatively one can run the model reference adaptive controller (MRAC) through the node *panda_control_MRAC*. 
 
 - `$ rosrun panda_control panda_control_AIC` 
 - Then *play* in the Gazebo GUI
