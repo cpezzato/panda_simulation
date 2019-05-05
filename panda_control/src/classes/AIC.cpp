@@ -54,8 +54,6 @@
       beliefs_mu_p_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_p", 10);
       beliefs_mu_pp_pub = nh.advertise<std_msgs::Float64MultiArray>("beliefs_mu_pp", 10);
 
-    // Subscribers for proprioceptive sensors (i.e. from joint:states) and camera position (i.e. aruco_single/pose)
-    cameraSub = nh.subscribe("aruco_single/pose", 1, &AIC::cameraCallback, this);
     // Initialize the variables for thr AIC
     AIC::initVariables();
   }
@@ -95,19 +93,26 @@
     else {
       // Simulate camera with 1cm uncertainty in every direction
       T = AIC::getEEPose(jointPos);
-      eev(0) = T(0,3) + 0.01*(2*((double) rand() / (RAND_MAX))-1);
-      eev(1) = T(1,3) + 0.01*(2*((double) rand() / (RAND_MAX))-1);
-      eev(2) = T(2,3) + 0.01*(2*((double) rand() / (RAND_MAX))-1);
+      // Save ground truth values
+      eev(0) = T(0,3);
+      eev(1) = T(1,3);
+      eev(2) = T(2,3);
+      // std::cout << "No dist" << '\n';
+      // std::cout << eev << '\n';
+      // Apply the distortion to the camera sensor
+      rDist = pow(eev(0),2) + pow(eev(1),2);
+
+      eev(0) = eev(0)*(1+K1*pow(rDist,2)+K2*pow(rDist,4)+K3*pow(rDist,6));
+      eev(1) = eev(1)*(1+K1*pow(rDist,2)+K2*pow(rDist,4)+K3*pow(rDist,6));
+
+      // Add noise, uncertainty of plus minus 2mm on top of the distortion
+      eev(0) = eev(0) + 0.002*(2*((double) rand() / (RAND_MAX))-1);
+      eev(1) = eev(1) + 0.002*(2*((double) rand() / (RAND_MAX))-1);
+
+      // the Z estimation has an accuracy of 5mm. We simulate this adding uncertainties between plus and minus 0.005 m
+      eev(2) = eev(2) + 0.005*(2*((double) rand() / (RAND_MAX))-1);
     }
       // std::cout << eev(0)-T(0,3) << '\n';
-  }
-
-  void   AIC::cameraCallback(const geometry_msgs::PoseStamped::ConstPtr& msg)
-  {
-    eePos.x = msg->pose.position.x;
-    eePos.y = msg->pose.position.y;
-    eePos.z = msg->pose.position.z;
-    ROS_INFO("x = %f  y = %f  z = %f ", eePos.x-eev(0), eePos.y-eev(1), eePos.z-eev(2));
   }
 
   void   AIC::initVariables(){
@@ -125,11 +130,11 @@
     var_muprime = 5.0;
     var_q = 1;
     var_qdot = 1;
-    var_eev = 5.0;
+    var_eev = 4;
 
     // Learning rates for the gradient descent (found that a ratio of 60 works good)
-    k_mu = 20;
-    k_a = 1200;
+    k_mu = 10.83;
+    k_a = 650;
 
     // Precision matrices (first set them to zero then populate the diagonal)
     SigmaP_yq0 = Eigen::Matrix<double, 7, 7>::Zero();
@@ -168,6 +173,11 @@
     AIC_mu_p.data.resize(7);
     AIC_mu_pp.data.resize(7);
     SPE.data.resize(3);
+
+    // Camera distortion coefficients
+    K1 = -0.05;
+    K2 = .005;
+    K3 = 0;
   }
 
   void AIC::minimiseF(){
@@ -289,7 +299,6 @@
   }
   // Methof for recovery from a fault
   void AIC::recoveryCameraFault(){
-    ROS_INFO("Elia gay");
     var_eev = var_eev*100000;
     SigmaP_yv0 = Eigen::Matrix<double, 7, 7>::Zero();
     // set the flag "recovered to skip this next"

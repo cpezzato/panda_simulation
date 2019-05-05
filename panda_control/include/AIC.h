@@ -40,8 +40,6 @@ public:
 
   // Callback to handle the proprioceptive sensory data from the topic /joint_states published at 1kHz
   void jointStatesCallback(const sensor_msgs::JointState::ConstPtr& msg);
-  // Callback to handle the image from the camera
-  void cameraCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
   // Method to set the necessary variables once the constructor is called
   void initVariables();
   // Main method which minimises the free-energy using gradient descent
@@ -64,13 +62,6 @@ public:
   void recoveryCameraFault();
 
 private:
-  // Define variables for storing the end-effector position
-  struct eePos
-    {
-        double x;
-        double y;
-        double z;
-    } eePos;
 
   // Variances associated with the active inference controller and the confidence relative to sensory input and beliefs
   double var_q, var_qdot, var_eev, var_mu, var_muprime;
@@ -93,7 +84,7 @@ private:
   // Publishers for joint torques to the topics /panda_joint*_controller/command, the free-energy and a threshold for it
   ros::Publisher tauPub1, tauPub2, tauPub3, tauPub4, tauPub5, tauPub6, tauPub7, IFE_pub, thresholdSPE_pub;
   // Subscriber for proprioceptive sensors (i.e. from joint_states) and camera (i.e. aruco_single/pose)
-  ros::Subscriber sensorSub, cameraSub;
+  ros::Subscriber sensorSub;
   // Support variables to contain the torques for the joints
   std_msgs::Float64 tau1, tau2, tau3, tau4, tau5, tau6, tau7, F, thresholdSPE;
   // Values for direct kinematics computation using DH parameters
@@ -116,6 +107,9 @@ private:
   int camFault;
   // Flags
   int faultDetected, recovered;
+  // Camera distoriotn coefficients
+  double K1, K2, K3, rDist;
+
 };
 
 #endif
