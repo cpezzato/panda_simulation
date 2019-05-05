@@ -7,26 +7,25 @@
 - Active inferencve control
 - Model reference adaptive control
 - Fault detection and recovery for camera faults with online threshold
+- More realistic camera simulation from datasheet of ensenso camera + barrel distortion
 
 ## TODO
-- Camera calibration (now the sensor is simulated using noisy data from the DK)
+- Clean up the code and run tests
 
 ## Description
 
-Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo using Active Inference. This repository contains 4 packages:
+Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo using Active Inference. This repository contains 3 packages:
 
-- *franka_description*: it contains the description of the robot
+- *franka_description*: it contains the urdf and xacro of the robot and the scene
 - *panda_control*: the package contains the active inference controller and a model reference adaptive controller for comparison
-- *panda_simulation*: package for launching the simulation loading a jointEffortController for each joint
-- *aruco_ros*: ROS wrapper for using ArUco libraries
+- *panda_simulation*: package for launching the simulation loading a jointEffortController for each joint and the scene with the robot(s)
 
 The packages *franka_description* and *panda_simulation* are a modified versions of the following:
 
 - official franka_ros: https://github.com/frankaemika/franka_ros
 - panda_simulation: https://github.com/erdalpekel/panda_simulation
 
-The wrapper fot the ArUco library is cloned from:
-- aruco_ros ROS Wiki: wiki.ros.org/aruco_ros
+Note that the *panda_simulation* package has been modified to allow to spawn multiple robots with different namespaces. Furthermore the *panda_arm.xacro* contains now a model of the robot with approximated dynamics. The file *panda_arm.xacro* has been updated with more accurate inertia tensor and centers of mass obtained using Meshlab and the .stl models.
 
 ## Installation
 
