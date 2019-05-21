@@ -38,7 +38,7 @@ int main(int argc, char **argv)
   desiredPos1[6] = 0.0;
 
   desiredPos2[0] = 0.0;
-  desiredPos2[1] = 0.0;
+  desiredPos2[1] = 0.2;
   desiredPos2[2] = 0.0;
   desiredPos2[3] = -1.0;
   desiredPos2[4] = 0.0;
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
   desiredPos3[0] = -1;
   desiredPos3[1] = 0.5;
   desiredPos3[2] = 0.0;
-  desiredPos3[3] = -1.1;
+  desiredPos3[3] = -1.2;
   desiredPos3[4] = 0.0;
   desiredPos3[5] = 1.6;
   desiredPos3[6] = 0;
@@ -68,22 +68,22 @@ int main(int argc, char **argv)
     if ((count!=0)&&(AIC_controller.dataReady()==1)){
       AIC_controller.minimiseF();
       cycles ++;
-      if (cycles == 5000){
+      if (cycles == 6000){
         //AIC_controller.cameraFaultON();
         AIC_controller.setGoal(desiredPos2);
       }
 
-      if (cycles == 7500){
+      if (cycles == 12000){
         //AIC_controller.cameraFaultOFF();
         AIC_controller.setGoal(desiredPos3);
       }
 
-      if (cycles == 12500){
+      if (cycles == 18000){
         //AIC_controller.cameraFaultOFF();
         AIC_controller.setGoal(desiredPos2);
       }
 
-      if (cycles == 15000){
+      if (cycles == 24000){
         //AIC_controller.cameraFaultOFF();
         AIC_controller.setGoal(desiredPos1);
         cycles = 0;

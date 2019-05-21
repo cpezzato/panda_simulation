@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   std_msgs::Float64MultiArray SPEreal;
   SPEreal.data.resize(3);
 
-  desiredPos1[0] = 1.0;
+  desiredPos1[0] = 1;
   desiredPos1[1] = 0.5;
   desiredPos1[2] = 0.0;
   desiredPos1[3] = -2;
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
   desiredPos1[6] = 0.0;
 
   desiredPos2[0] = 0.0;
-  desiredPos2[1] = 0.0;
+  desiredPos2[1] = 0.2;
   desiredPos2[2] = 0.0;
   desiredPos2[3] = -1.0;
   desiredPos2[4] = 0.0;
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
   desiredPos3[0] = -1;
   desiredPos3[1] = 0.5;
   desiredPos3[2] = 0.0;
-  desiredPos3[3] = -1.1;
+  desiredPos3[3] = -1.2;
   desiredPos3[4] = 0.0;
   desiredPos3[5] = 1.6;
   desiredPos3[6] = 0;
@@ -93,25 +93,25 @@ int main(int argc, char **argv)
       // Cycles counter
       cycles ++;
 
-      if (cycles == 5000){
+      if (cycles == 6000){
         //AIC_realRobot.cameraFaultON();
         AIC_realRobot.setGoal(desiredPos2);
         AIC_model.setGoal(desiredPos2);
       }
 
-      if (cycles == 7500){
+      if (cycles == 12000){
         //AIC_realRobot.cameraFaultOFF();
         AIC_realRobot.setGoal(desiredPos3);
         AIC_model.setGoal(desiredPos3);
       }
 
-      if (cycles == 12500){
+      if (cycles == 18000){
         //AIC_realRobot.cameraFaultOFF();
         AIC_realRobot.setGoal(desiredPos2);
         AIC_model.setGoal(desiredPos2);
       }
 
-      if (cycles == 15000){
+      if (cycles == 24000){
         //AIC_realRobot.cameraFaultOFF();
         AIC_realRobot.setGoal(desiredPos1);
         AIC_model.setGoal(desiredPos1);

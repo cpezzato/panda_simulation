@@ -20,16 +20,16 @@
 
   void   MRAC::initVariables(){
     // Initialize publishers on the topics /panda_joint*_controller/command for the joint efforts
-    tauPub1 = nh.advertise<std_msgs::Float64>("/panda_joint1_controller/command", 20);
-    tauPub2 = nh.advertise<std_msgs::Float64>("/panda_joint2_controller/command", 20);
-    tauPub3 = nh.advertise<std_msgs::Float64>("/panda_joint3_controller/command", 20);
-    tauPub4 = nh.advertise<std_msgs::Float64>("/panda_joint4_controller/command", 20);
-    tauPub5 = nh.advertise<std_msgs::Float64>("/panda_joint5_controller/command", 20);
-    tauPub6 = nh.advertise<std_msgs::Float64>("/panda_joint6_controller/command", 20);
-    tauPub7 = nh.advertise<std_msgs::Float64>("/panda_joint7_controller/command", 20);
+    tauPub1 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint1_controller/command", 20);
+    tauPub2 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint2_controller/command", 20);
+    tauPub3 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint3_controller/command", 20);
+    tauPub4 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint4_controller/command", 20);
+    tauPub5 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint5_controller/command", 20);
+    tauPub6 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint6_controller/command", 20);
+    tauPub7 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint7_controller/command", 20);
 
     // Subscribers for proprioceptive sensors (i.e. from joint:states) and camera position (i.e. aruco_single/pose)
-    sensorSub = nh.subscribe("joint_states", 1, &MRAC::jointStatesCallback, this);
+    sensorSub = nh.subscribe("/robot1/joint_states", 1, &MRAC::jointStatesCallback, this);
 
     // Set goal for velocity (always zero), the goal for the position is set by the main node MRAC_controller_node
     dqr << 0, 0, 0, 0, 0, 0, 0;
@@ -199,5 +199,4 @@
     tauPub1.publish(tau1); tauPub2.publish(tau2); tauPub3.publish(tau3);
     tauPub4.publish(tau4); tauPub5.publish(tau5); tauPub6.publish(tau6);
     tauPub7.publish(tau7);
-    // ROS_INFO("here");
   }

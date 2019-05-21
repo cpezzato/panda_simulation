@@ -130,11 +130,11 @@
     var_muprime = 5.0;
     var_q = 1;
     var_qdot = 1;
-    var_eev = 4;
+    var_eev = 400000000;
 
     // Learning rates for the gradient descent (found that a ratio of 60 works good)
-    k_mu = 10.83;
-    k_a = 650;
+    k_mu = 11.67;
+    k_a = 700;
 
     // Precision matrices (first set them to zero then populate the diagonal)
     SigmaP_yq0 = Eigen::Matrix<double, 7, 7>::Zero();

@@ -32,10 +32,10 @@ int main(int argc, char **argv)
   desiredPos1[3] = -2;
   desiredPos1[4] = 0.0;
   desiredPos1[5] = 2.5;
-  desiredPos1[6] = 0;
+  desiredPos1[6] = 0.0;
 
   desiredPos2[0] = 0.0;
-  desiredPos2[1] = 0.0;
+  desiredPos2[1] = 0.2;
   desiredPos2[2] = 0.0;
   desiredPos2[3] = -1.0;
   desiredPos2[4] = 0.0;
@@ -45,10 +45,11 @@ int main(int argc, char **argv)
   desiredPos3[0] = -1;
   desiredPos3[1] = 0.5;
   desiredPos3[2] = 0.0;
-  desiredPos3[3] = -1.1;
+  desiredPos3[3] = -1.2;
   desiredPos3[4] = 0.0;
   desiredPos3[5] = 1.6;
   desiredPos3[6] = 0;
+
 
   // Object of the class MRAC which will take care of everything
   MRAC MRAC_controller;
@@ -56,29 +57,29 @@ int main(int argc, char **argv)
   MRAC_controller.setGoal(desiredPos1);
 
   // Main loop
-  ros::Rate rate(1000);
+  // Main loop
+  ros::Rate rate(500);
   while (ros::ok()){
     // Manage all the callbacks and so read sensors
     ros::spinOnce();
 
     // Skip only first cycle to allow reading the sensory input first
     if ((count!=0)&&(MRAC_controller.dataReady()==1)){
-      // Control using MRAC
       MRAC_controller.computeControlInput();
       cycles ++;
-      if (cycles == 5000){
+      if (cycles == 3000){
         MRAC_controller.setGoal(desiredPos2);
       }
 
-      if (cycles == 7500){
+      if (cycles == 6000){
         MRAC_controller.setGoal(desiredPos3);
       }
 
-      if (cycles == 12500){
+      if (cycles == 9000){
         MRAC_controller.setGoal(desiredPos2);
       }
 
-      if (cycles == 15000){
+      if (cycles == 12000){
         MRAC_controller.setGoal(desiredPos1);
         cycles = 0;
       }
