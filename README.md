@@ -50,7 +50,7 @@ Once inside the image:
 
 The launch file launches a Gazebo simulation in pause with a single robot. You can then run the node *panda_control_AIC_single* for the active inference controller (AIC) and play the simulation to see the robot moving to the set-point. Alternatively one can run the model reference adaptive controller (MRAC) through the node *panda_control_MRAC*. 
 
-- `$ rosrun panda_control panda_control_AIC` 
+- `$ rosrun panda_control panda_control_AIC_single` 
 - Then *play* in the Gazebo GUI
 
 The result with the active inference controller is the following:
