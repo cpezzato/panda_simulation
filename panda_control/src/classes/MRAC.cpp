@@ -46,7 +46,6 @@
     h = 0.001;
 
     // MRAC Variables
-    // Natural pulsation
     omega << 2, 2, 2, 2, 2, 2, 2;
     // Damping
     zeta << 1, 1, 1, 1, 1, 1, 1;
