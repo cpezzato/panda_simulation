@@ -8,7 +8,7 @@
  * the new promisin theory called Active Inference proposed by Karl Friston.
  *
  * The robot moves to the desired position specified in desiredPos performing
- * free-energy minimization and actiove inference using gradient descent.
+ * free-energy minimization and active inference using gradient descent.
  * The robot is equipped with proprioceptive sensors for joints position and
  * velocity and a camera for the end-effector pose estimation.
  * The control is in joint space.

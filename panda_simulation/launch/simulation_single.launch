@@ -48,7 +48,7 @@
     </group>
 
     <!-- Launch robot control node, either AIC or MRAC-->
-    <!--node pkg="panda_control" type="panda_control_AIC_single" name="panda_control_AIC_single" /-->
+    <node pkg="panda_control" type="panda_control_AIC_single" name="panda_control_AIC_single" />
     <!--node pkg="panda_control" type="panda_control_MRAC" name="panda_control_MRAC" /-->
     <!--Record data, change destination according to your account-->
     <!--node pkg="rosbag" type="record" args="-o /home/corrado/Desktop/rosbag/
@@ -60,6 +60,10 @@
       /robot1/panda_joint6_controller/command
       /robot1/panda_joint7_controller/command
       /robot1/joint_states
+    " name="record" output="screen"/-->
+
+    <!--node pkg="rosbag" type="record" args="-o /home/corrado/Desktop/rosbag/
+      /panda_free_energy
     " name="record" output="screen"/-->
 
 </launch>

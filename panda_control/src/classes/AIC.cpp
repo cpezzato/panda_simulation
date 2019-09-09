@@ -127,10 +127,11 @@
 
     // Variances associated with the beliefs and the sensory inputs
     var_mu = 5.0;
-    var_muprime = 5.0;
+    var_muprime = 10.0;
     var_q = 1;
     var_qdot = 1;
-    var_eev = 400000000;
+    // Exclude camera in this example
+    var_eev = 100000000;
 
     // Learning rates for the gradient descent (found that a ratio of 60 works good)
     k_mu = 11.67;
