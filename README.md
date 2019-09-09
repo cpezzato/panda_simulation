@@ -1,6 +1,6 @@
-# panda_simulation (work-in-progress)
+# Active inference for robot manipulators. Simulation using Franka Emika Panda 7-DOF
 
-## Current progress (DONE)
+## Current progress
 - Spawn panda robot arm with dynamic description and jointEffortControllers
 - Spawn camera Gazebo sensor plugin and ArUco marker 7 for camera pose estimation
 - Free-energy minimisation using proprioceptive and visual sensors
@@ -10,7 +10,7 @@
 - More realistic camera simulation from datasheet of ensenso camera + barrel distortion
 
 ## TODO
-- Clean up the code and run tests
+- Clean up the code
 
 ## Description
 
