@@ -1,16 +1,8 @@
 # Active inference for robot manipulators. Simulation using Franka Emika Panda 7-DOF
 
-## Current progress
-- Spawn panda robot arm with dynamic description and jointEffortControllers
-- Spawn camera Gazebo sensor plugin and ArUco marker 7 for camera pose estimation
-- Free-energy minimisation using proprioceptive and visual sensors
-- Active inferencve control
-- Model reference adaptive control
-- Fault detection and recovery for camera faults with online threshold
-- More realistic camera simulation from datasheet of ensenso camera + barrel distortion
-
-## TODO
-- Clean up the code
+## News
+### Active inference for the real setup
+The code for controlling the real Panda using either libfranka or franka_ros is now available at https://github.com/cpezzato/active_inference
 
 ## Description
 
