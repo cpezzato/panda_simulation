@@ -4,7 +4,7 @@
 ### Active inference for the real setup
 The code for controlling the real Panda using either libfranka or franka_ros is now available at https://github.com/cpezzato/active_inference
 
-## Description
+## Description package for simulation
 
 Repository for the dynamic simulation of the Franka Emika Panda robot arm in Gazebo using Active Inference. This repository contains 3 packages:
 
