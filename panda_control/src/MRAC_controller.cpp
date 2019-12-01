@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
   // Main loop
   // Main loop
-  ros::Rate rate(500);
+  ros::Rate rate(1000);
   while (ros::ok()){
     // Manage all the callbacks and so read sensors
     ros::spinOnce();
