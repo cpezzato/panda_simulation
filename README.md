@@ -1,5 +1,12 @@
 # Active inference for robot manipulators. Simulation using Franka Emika Panda 7-DOF
 
+### How to cite this work
+This simulation was developed to support the theoretical results of this work:
+
+- Pezzato C., Ferrari, R., Henrandez C., *A Novel Adaptive Controller for Robot Manipulators Based on Active Inference*, IEEE Robotics and Automation Letters, 2020. 
+
+If you found this controller useful, please consider citing the paper above. 
+
 ## News
 ### Active inference for the real setup
 The code for controlling the real Panda using either libfranka or franka_ros is now available at https://github.com/cpezzato/active_inference
