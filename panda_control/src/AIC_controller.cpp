@@ -69,22 +69,18 @@ int main(int argc, char **argv)
       AIC_controller.minimiseF();
       cycles ++;
       if (cycles == 6000){
-        //AIC_controller.cameraFaultON();
         AIC_controller.setGoal(desiredPos2);
       }
 
       if (cycles == 12000){
-        //AIC_controller.cameraFaultOFF();
         AIC_controller.setGoal(desiredPos3);
       }
 
       if (cycles == 18000){
-        //AIC_controller.cameraFaultOFF();
         AIC_controller.setGoal(desiredPos2);
       }
 
       if (cycles == 24000){
-        //AIC_controller.cameraFaultOFF();
         AIC_controller.setGoal(desiredPos1);
         cycles = 0;
       }
