@@ -26,7 +26,6 @@
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Dense>
 #include <iostream>
-#include "generativeModel.h"
 #include <stdlib.h>
 
 // Class MRAC to hanle the subscribers and the publishers for the active inference controller

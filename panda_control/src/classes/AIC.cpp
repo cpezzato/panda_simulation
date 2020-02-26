@@ -75,12 +75,6 @@
       mu_p = jointVel;
     }
 
-    // Generative model and its derivative from object grnMod of the class generativeModel
-    g = genMod.getG(mu);
-    gxprime = genMod.getGxprime(mu);
-    gyprime = genMod.getGyprime(mu);
-    gzprime = genMod.getGzprime(mu);
-
     // Simulate camera input from direct kinematics
     // eev(0) = g(0) + 0.01*(((double) rand() / (RAND_MAX)));
     // eev(1) = g(1) + 0.01*(((double) rand() / (RAND_MAX)));
@@ -202,8 +196,8 @@
     }
     //std::cout << faultDetected << '\n';
     // Free-energy minimization using gradient descent and beliefs update
-    mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d)-SigmaP_yv0*(eev(0)-g(0))*gxprime -SigmaP_yv0*(eev(1)-g(1))*gyprime -SigmaP_yv0*(eev(2)-g(2))*gzprime);
-    //mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
+    //mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d)-SigmaP_yv0*(eev(0)-g(0))*gxprime -SigmaP_yv0*(eev(1)-g(1))*gyprime -SigmaP_yv0*(eev(2)-g(2))*gzprime);
+    mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
     mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p));
     mu_dot_pp = - k_mu*(SigmaP_muprime*(mu_pp+mu_p));
 
