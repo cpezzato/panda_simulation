@@ -36,7 +36,7 @@ message(${JSONCPP_LIBRARIES})
 ## The catkin_package macro generates cmake config files for your package
 ## Declare things to be passed to dependent projects
 catkin_package(
-  CATKIN_DEPENDS 
+  CATKIN_DEPENDS
 )
 
 ###########
@@ -48,4 +48,3 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
-

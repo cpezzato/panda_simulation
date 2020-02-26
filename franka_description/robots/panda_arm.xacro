@@ -1,9 +1,19 @@
 <?xml version='1.0' encoding='utf-8'?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda">
 
-  <!-- This masses are incorrect on purpose, off by 20% w.r.t the model-->
+  <!--Correct masses-->
+  <xacro:property name="mass_link0" value="3.06357" />
+  <xacro:property name="mass_link1" value="2.34471" />
+  <xacro:property name="mass_link2" value="2.36414" />
+  <xacro:property name="mass_link3" value="2.38050" />
+  <xacro:property name="mass_link4" value="2.42754" />
+  <xacro:property name="mass_link5" value="3.49611" />
+  <xacro:property name="mass_link6" value="1.46736" />
+  <xacro:property name="mass_link7" value="0.45606" />
+  <xacro:property name="mass_link8" value="0.001" />
 
-  <xacro:property name="mass_link0" value="3.66357" />
+  <!-- Wrong masses to test adaptability of the algorithms, on purpose off by 20% -->
+  <!--xacro:property name="mass_link0" value="3.66357" />
   <xacro:property name="mass_link1" value="2.04471" />
   <xacro:property name="mass_link2" value="2.56414" />
   <xacro:property name="mass_link3" value="2.48050" />
@@ -11,7 +21,7 @@
   <xacro:property name="mass_link5" value="3.09611" />
   <xacro:property name="mass_link6" value="1.66736" />
   <xacro:property name="mass_link7" value="0.75606" />
-  <xacro:property name="mass_link8" value="0.1" />
+  <xacro:property name="mass_link8" value="0.1" /-->
 
   <xacro:property name="link0_cog" value="-0.029190 -0.000879 0.056603" />
   <xacro:property name="link1_cog" value="0.000011 -0.031266 -0.069373" />
@@ -21,17 +31,6 @@
   <xacro:property name="link5_cog" value="-0.000064 0.038412 -0.109970" />
   <xacro:property name="link6_cog" value="0.051002 0.006933 0.006169" />
   <xacro:property name="link7_cog" value="0.010361 0.010360 0.079108" />
-
-  <!-- Correct masses
-  <xacro:property name="mass_link0" value="3.06357" />
-  <xacro:property name="mass_link1" value="2.34471" />
-  <xacro:property name="mass_link2" value="2.36414" />
-  <xacro:property name="mass_link3" value="2.38050" />
-  <xacro:property name="mass_link4" value="2.42754" />
-  <xacro:property name="mass_link5" value="3.49611" />
-  <xacro:property name="mass_link6" value="1.46736" />
-  <xacro:property name="mass_link7" value="0.45606" />
-  <xacro:property name="mass_link8" value="0.001" /> -->
 
     <xacro:macro name="cylinder_inertial" params="radius length mass *origin">
       <inertial>
@@ -275,20 +274,6 @@
       <limit effort="1" lower="0" upper="0.1" velocity="0.1"/>
       <dynamics damping="100"/>
     </joint>
-
-    <!--link name="marker_link">
-    <visual>
-      <geometry>
-          <mesh filename="package://${description_pkg}/meshes/visual/marker.dae" scale="1 1 0.001"/>
-      </geometry>
-    </visual>
-  </link>
-
-  <joint name="marker_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.0011"/>
-    <parent link="panda_link8"/>
-    <child link="marker_link"/>
-  </joint-->
 
   </xacro:macro>
 

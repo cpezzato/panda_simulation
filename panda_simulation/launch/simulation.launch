@@ -11,7 +11,6 @@
 
     <!--launch GAZEBO with own world configuration -->
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <!--arg name="world_name" value="$(find franka_gazebo)/worlds/my_world.world"/-->
       	<arg name="debug" value="$(arg debug)"/>
         <arg name="gui" value="$(arg gui)"/>
         <arg name="paused" value="$(arg paused)"/>
@@ -23,7 +22,7 @@
     <!-- Load joint effort controller configurations from YAML file to parameter server -->
     <group ns="/robot1">
         <param name="tf_prefix" value="panda1" />
-        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_description)/robots/panda_arm_camera.urdf.xacro"/>
+        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find franka_description)/robots/panda_arm_world.urdf.xacro"/>
         <rosparam file="$(find panda_simulation)/config/panda_control.yaml" command="load" ns="/robot1"/>
 
         <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
@@ -49,7 +48,7 @@
 
     <!-- Launch robot control node, either AIC or MRAC, comment accordingly-->
     <node pkg="panda_control" type="panda_control_AIC_single" name="panda_control_AIC_single" />
-    <!--node pkg="panda_control" type="panda_control_MRAC" name="panda_control_MRAC" /-->
+    <!--node pkg="panda_control" type="panda_control_MRAC" name="panda_control_MRAC"/-->
 
     <!--Record data, change destination according to your account-->
     <!--node pkg="rosbag" type="record" args="-o /home/corrado/Desktop/rosbag/
@@ -62,7 +61,7 @@
       /robot1/panda_joint7_controller/command
       /robot1/joint_states
     " name="record" output="screen"/-->
-    
+
     <!--node pkg="rosbag" type="record" args="-o /home/corrado/Desktop/rosbag/
       /panda_free_energy
     " name="record" output="screen"/-->
