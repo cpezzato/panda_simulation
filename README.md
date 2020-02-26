@@ -3,9 +3,9 @@
 ### How to cite this work
 This simulation was developed to support the theoretical results of this work:
 
-- Pezzato C., Ferrari, R., Henrandez C., *A Novel Adaptive Controller for Robot Manipulators Based on Active Inference*, IEEE Robotics and Automation Letters, 2020. 
+- Pezzato C., Ferrari, R., Henrandez C., *A Novel Adaptive Controller for Robot Manipulators Based on Active Inference*, IEEE Robotics and Automation Letters, 2020.
 
-If you found this controller useful, please consider citing the paper above. 
+If you found this controller useful, please consider citing the paper above.
 
 ## News
 ### Active inference for the real setup
@@ -30,29 +30,25 @@ Note that the *panda_simulation* package has been modified to allow to spawn mul
 
 Make sure you installed *ros-kinetic-desktop-full* and that you have all the necessary dependencies. You can do that building a singularity image from this singulatity recipe:
 
-https://github.com/cpezzato/panda-xenial-docker/blob/master/panda-recipe-minimal-xenial 
+https://github.com/cpezzato/panda-xenial-docker/blob/master/panda-recipe-minimal-xenial
 
 ### How to use
 Run a shell within the container:
-- With Nvidia GPU: `$ singularity shell --nv YOUR_IMAGE_NAME` 
-- Without Nvidia GPU: `$ singularity shell YOUR_IMAGE_NAME` 
+- With Nvidia GPU: `$ singularity shell --nv YOUR_IMAGE_NAME`
+- Without Nvidia GPU: `$ singularity shell YOUR_IMAGE_NAME`
 
 Once inside the image:
 
-- Source: `$ source /opt/ros/kinetic/setup.bash` 
-- Create a folder for your catkin_ws: `$ mkdir -p your_catkin_ws/` <br /> 
-- Move to the folder: $ cd your_catkin_ws/` <br /> 
-- Clone the repository `$ git clone https://github.com/cpezzato/panda_simulation.git src` <br /> 
-- Build the workspace: `$ catkin_make` <br /> 
-- Source: `$ source devel/setup.bash` <br /> 
-- Launch: `$ roslaunch panda_simulation simulation_single.launch`
+- Source: `$ source /opt/ros/kinetic/setup.bash`
+- Create a folder for your catkin_ws: `$ mkdir -p your_catkin_ws/` <br />
+- Move to the folder: $ cd your_catkin_ws/` <br />
+- Clone the repository `$ git clone https://github.com/cpezzato/panda_simulation.git src` <br />
+- Build the workspace: `$ catkin_make` <br />
+- Source: `$ source devel/setup.bash` <br />
+- Launch: `$ roslaunch panda_simulation simulation.launch`
 
-The launch file launches a Gazebo simulation in pause with a single robot. You can then run the node *panda_control_AIC_single* for the active inference controller (AIC) and play the simulation to see the robot moving to the set-point. Alternatively one can run the model reference adaptive controller (MRAC) through the node *panda_control_MRAC*. 
-
-- `$ rosrun panda_control panda_control_AIC_single` 
-- Then *play* in the Gazebo GUI
+The launch file launches a Gazebo simulation in pause with a single robot. The launch file run the node *panda_control_AIC* for the active inference controller (AIC) by default. Alternatively one can run the model reference adaptive controller (MRAC) through the node *panda_control_MRAC*, modifying the launch file accordingly. Just press play and enjoy.
 
 The result with the active inference controller is the following:
 
 ![AIC](https://user-images.githubusercontent.com/49310726/56992707-f02b0e80-6b9a-11e9-99fd-58a31f114d0e.gif)
-
