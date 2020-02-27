@@ -8,6 +8,12 @@ This simulation was developed to support the theoretical results of this work:
 If you found this controller useful, please consider citing the paper above.
 
 ## News
+
+### Video
+A video showing the capability of active inference in the real world is now on youtube!
+
+https://www.youtube.com/watch?v=Vsb0MzOp_TY
+
 ### Active inference for the real setup
 The code for controlling the real Panda using either libfranka or franka_ros is now available at https://github.com/cpezzato/active_inference
 
