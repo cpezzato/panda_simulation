@@ -59,3 +59,6 @@ The launch file launches a Gazebo simulation in pause with a single robot. The l
 The result with the active inference controller is the following:
 
 ![AIC](https://user-images.githubusercontent.com/49310726/56992707-f02b0e80-6b9a-11e9-99fd-58a31f114d0e.gif)
+
+### Troubleshooting
+If you are using ROS Melodic and Gazebo 9, the robot meshes will probably not be showned. To solve this, just remove te "transparent" attribute in the .dae flesin *franka_description/meshes/visual*
