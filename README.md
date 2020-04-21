@@ -3,7 +3,16 @@
 ### How to cite this work
 This simulation was developed to support the theoretical results of this work:
 
-- Pezzato C., Ferrari, R., Henrandez C., *A Novel Adaptive Controller for Robot Manipulators Based on Active Inference*, IEEE Robotics and Automation Letters, 2020.
+- Pezzato C., Ferrari, R., Henrandez C., A Novel Adaptive Controller for Robot Manipulators Based on Active Inference, IEEE Robotics and Automation Letters, 2020.
+
+- @ARTICLE{Pezzato2019, 
+author={C. {Pezzato} and R. {Ferrari} and C. H. {Corbato}}, 
+journal={IEEE Robotics and Automation Letters}, 
+title={A Novel Adaptive Controller for Robot Manipulators Based on Active Inference}, 
+year={2020}, 
+volume={5}, 
+number={2}, 
+pages={2973-2980},}
 
 If you found this controller useful, please consider citing the paper above.
 
