@@ -14,81 +14,117 @@
  * The control is in joint space.
  *
  */
-
+#include<string>
+#include <ros/console.h>
 #include "AIC.h"
 
 // Constant for class AIC constructor to define which robot to control
 const int robot = 1;
+std::vector<double> desiredPos(7);
+
+void desiredPosCallback(const std_msgs::Float64MultiArrayConstPtr& msg){
+  for (int i = 0; i < 7; i++){
+    desiredPos[i] = msg->data[i];
+  }
+}
 
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "AIC_controller_single_node");
-  // Variables to regulate the flow (Force to read once every 1ms the sensors)
-  int count = 0;
-  int cycles = 0;
-  // Variable for desired position, set here the goal for the Panda for each joint
-  std::vector<double> desiredPos1(7), desiredPos2(7), desiredPos3(7);
 
-  desiredPos1[0] = 1;
-  desiredPos1[1] = 0.5;
-  desiredPos1[2] = 0.0;
-  desiredPos1[3] = -2;
-  desiredPos1[4] = 0.0;
-  desiredPos1[5] = 2.5;
-  desiredPos1[6] = 0.0;
+  ros::NodeHandle nh;
 
-  desiredPos2[0] = 0.0;
-  desiredPos2[1] = 0.2;
-  desiredPos2[2] = 0.0;
-  desiredPos2[3] = -1.0;
-  desiredPos2[4] = 0.0;
-  desiredPos2[5] = 1.2;
-  desiredPos2[6] = 0.0;
+  ros::Subscriber sub = nh.subscribe("arm_goal", 1000, desiredPosCallback);
 
-  desiredPos3[0] = -1;
-  desiredPos3[1] = 0.5;
-  desiredPos3[2] = 0.0;
-  desiredPos3[3] = -1.2;
-  desiredPos3[4] = 0.0;
-  desiredPos3[5] = 1.6;
-  desiredPos3[6] = 0;
-
-  // Object of the class AIC which will take care of everything
   AIC AIC_controller(robot);
-  // Set desired position in the AIC class
-  AIC_controller.setGoal(desiredPos1);
 
-  // Main loop
+  desiredPos[0] = 1;
+  desiredPos[1] = 0.5;
+  desiredPos[2] = 0.0;
+  desiredPos[3] = -2;
+  desiredPos[4] = 0.0;
+  desiredPos[5] = 2.5;
+  desiredPos[6] = 0.0;
+
   ros::Rate rate(1000);
   while (ros::ok()){
-    // Manage all the callbacks and so read sensors
     ros::spinOnce();
 
-    // Skip only first cycle to allow reading the sensory input first
-    if ((count!=0)&&(AIC_controller.dataReady()==1)){
+    AIC_controller.setGoal(desiredPos);
+
+    if (AIC_controller.dataReady() == 1){
+      //ROS_WARN_STREAM(std::to_string(desiredPos[0]) + ", " + std::to_string(desiredPos[1]));
       AIC_controller.minimiseF();
-      cycles ++;
-      if (cycles == 6000){
-        AIC_controller.setGoal(desiredPos2);
-      }
-
-      if (cycles == 12000){
-        AIC_controller.setGoal(desiredPos3);
-      }
-
-      if (cycles == 18000){
-        AIC_controller.setGoal(desiredPos2);
-      }
-
-      if (cycles == 24000){
-        AIC_controller.setGoal(desiredPos1);
-        cycles = 0;
-      }
     }
-    else
-      count ++;
-
-    rate.sleep();
   }
+
+  // Variables to regulate the flow (Force to read once every 1ms the sensors)
+  // int count = 0;
+  // int cycles = 0;
+  // // Variable for desired position, set here the goal for the Panda for each joint
+  // std::vector<double> desiredPos1(7), desiredPos2(7), desiredPos3(7);
+
+  // desiredPos1[0] = 1;
+  // desiredPos1[1] = 0.5;
+  // desiredPos1[2] = 0.0;
+  // desiredPos1[3] = -2;
+  // desiredPos1[4] = 0.0;
+  // desiredPos1[5] = 2.5;
+  // desiredPos1[6] = 0.0;
+
+  // desiredPos2[0] = 0.0;
+  // desiredPos2[1] = 0.2;
+  // desiredPos2[2] = 0.0;
+  // desiredPos2[3] = -1.0;
+  // desiredPos2[4] = 0.0;
+  // desiredPos2[5] = 1.2;
+  // desiredPos2[6] = 0.0;
+
+  // desiredPos3[0] = -1;
+  // desiredPos3[1] = 0.5;
+  // desiredPos3[2] = 0.0;
+  // desiredPos3[3] = -1.2;
+  // desiredPos3[4] = 0.0;
+  // desiredPos3[5] = 1.6;
+  // desiredPos3[6] = 0;
+
+  // // Object of the class AIC which will take care of everything
+  // AIC AIC_controller(robot);
+  // // Set desired position in the AIC class
+  // AIC_controller.setGoal(desiredPos1);
+
+  // // Main loop
+  // ros::Rate rate(1000);
+  // while (ros::ok()){
+  //   // Manage all the callbacks and so read sensors
+  //   ros::spinOnce();
+  //   // Skip only first cycle to allow reading the sensory input first
+
+  //   if ((count != 0) && (AIC_controller.dataReady() == 1))
+  //   {
+  //     AIC_controller.minimiseF();
+  //     cycles ++;
+  //     if (cycles == 6000){
+  //       AIC_controller.setGoal(desiredPos2);
+  //     }
+
+  //     if (cycles == 12000){
+  //       AIC_controller.setGoal(desiredPos3);
+  //     }
+
+  //     if (cycles == 18000){
+  //       AIC_controller.setGoal(desiredPos2);
+  //     }
+
+  //     if (cycles == 24000){
+  //       AIC_controller.setGoal(desiredPos1);
+  //       cycles = 0;
+  //     }
+  //   }
+  //   else
+  //     count ++;
+
+  //   rate.sleep();
+  // }
   return 0;
 }

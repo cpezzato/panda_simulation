@@ -8,6 +8,7 @@
  * Definition of the methods contained in AIC.h
  *
  */
+#include <ros/console.h>
 
 #include "AIC.h"
 
@@ -15,14 +16,14 @@
   AIC::AIC(int whichRobot){
 
       // Initialize publishers on the topics /robot1/panda_joint*_controller/command for the joint efforts
-      tauPub1 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint1_controller/command", 20);
-      tauPub2 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint2_controller/command", 20);
-      tauPub3 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint3_controller/command", 20);
-      tauPub4 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint4_controller/command", 20);
-      tauPub5 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint5_controller/command", 20);
-      tauPub6 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint6_controller/command", 20);
-      tauPub7 = nh.advertise<std_msgs::Float64>("/robot1/panda_joint7_controller/command", 20);
-      sensorSub = nh.subscribe("/robot1/joint_states", 1, &AIC::jointStatesCallback, this);
+      tauPub1 = nh.advertise<std_msgs::Float64>("/mmrobot/mmrobot_joint1_effort_controller/command", 20);
+      tauPub2 = nh.advertise<std_msgs::Float64>("/mmrobot/mmrobot_joint2_effort_controller/command", 20);
+      tauPub3 = nh.advertise<std_msgs::Float64>("/mmrobot/mmrobot_joint3_effort_controller/command", 20);
+      tauPub4 = nh.advertise<std_msgs::Float64>("/mmrobot/mmrobot_joint4_effort_controller/command", 20);
+      tauPub5 = nh.advertise<std_msgs::Float64>("/mmrobot/mmrobot_joint5_effort_controller/command", 20);
+      tauPub6 = nh.advertise<std_msgs::Float64>("/mmrobot/mmrobot_joint6_effort_controller/command", 20);
+      tauPub7 = nh.advertise<std_msgs::Float64>("/mmrobot/mmrobot_joint7_effort_controller/command", 20);
+      sensorSub = nh.subscribe("/mmrobot/joint_states", 1, &AIC::jointStatesCallback, this);
       // Publisher for the free-energy and sensory prediction errors
       IFE_pub = nh.advertise<std_msgs::Float64>("panda_free_energy", 10);
       SPE_pub = nh.advertise<std_msgs::Float64MultiArray>("panda_SPE", 10);
@@ -46,8 +47,8 @@
   {
     // Save joint values
     for( int i = 0; i < 7; i++ ) {
-      jointPos(i) = msg->position[i];
-      jointVel(i) = msg->velocity[i];
+      jointPos(i) = msg->position[i+3];
+      jointVel(i) = msg->velocity[i+3];
     }
     // If this is the first time we read the joint states then we set the current beliefs
     if (dataReceived == 0){
@@ -67,12 +68,12 @@
     // Variances associated with the beliefs and the sensory inputs
     var_mu = 5.0;
     var_muprime = 10.0;
-    var_q = 1;
+    var_q = 5;
     var_qdot = 1;
 
     // Learning rates for the gradient descent (found that a ratio of 60 works good)
     k_mu = 11.67;
-    k_a = 700;
+    k_a = 400;
 
     // Precision matrices (first set them to zero then populate the diagonal)
     SigmaP_yq0 = Eigen::Matrix<double, 7, 7>::Zero();
@@ -104,7 +105,7 @@
   }
 
   void AIC::minimiseF(){
-
+    
     // Compute single sensory prediction errors
     SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
     SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);
@@ -172,7 +173,8 @@
   }
 
   void AIC::setGoal(std::vector<double> desiredPos){
-    for(int i=0; i<desiredPos.size(); i++){
+    for (int i = 0; i < desiredPos.size(); i++)
+    {
       mu_d(i) = desiredPos[i];
     }
   }

@@ -1,0 +1,20 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/stefan/ros_mm/devel/lib/python2.7/dist-packages",
+        "/home/stefan/airlab_ws/devel/lib/python2.7/dist-packages",
+        "/home/stefan/tiagopp_ws/devel/lib/python2.7/dist-packages",
+        "/home/stefan/demo_ws/devel/lib/python2.7/dist-packages",
+        "/opt/ros/melodic/lib/python2.7/dist-packages"
+    ],
+    "files.associations": {
+        "*.world": "xml",
+        "string": "cpp"
+    },
+    "python.analysis.extraPaths": [
+        "/home/stefan/ros_mm/devel/lib/python2.7/dist-packages",
+        "/home/stefan/airlab_ws/devel/lib/python2.7/dist-packages",
+        "/home/stefan/tiagopp_ws/devel/lib/python2.7/dist-packages",
+        "/home/stefan/demo_ws/devel/lib/python2.7/dist-packages",
+        "/opt/ros/melodic/lib/python2.7/dist-packages"
+    ]
+}

@@ -1,0 +1,8 @@
+#goal definition
+geometry_msgs/Pose pose
+---
+#result definition
+bool success
+---
+#feedback definition
+float64[] joint_state

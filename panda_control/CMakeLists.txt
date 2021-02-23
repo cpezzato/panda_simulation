@@ -11,6 +11,9 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   geometry_msgs
+  active_inference_msgs
+  actionlib_msgs
+  actionlib
 )
 
 ###################################
@@ -23,6 +26,7 @@ catkin_package( CATKIN_DEPENDS
 	sensor_msgs
 	std_msgs
   geometry_msgs
+  active_inference_msgs
 )
 
 ###########
