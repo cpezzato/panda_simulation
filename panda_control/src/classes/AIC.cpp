@@ -105,7 +105,7 @@
   }
 
   void AIC::minimiseF(){
-    
+
     // Compute single sensory prediction errors
     SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
     SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);
