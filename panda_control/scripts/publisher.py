@@ -14,7 +14,7 @@ client = actionlib.SimpleActionClient('arm_goal_action', active_inference_msgs.m
 client.wait_for_server()
 
 p = active_inference_msgs.msg.ActiveInferenceActionGoal()
-rospy.loginfo(p)
+
 p.goal.pose.position.x = 0.2
 p.goal.pose.position.y = -0.422
 p.goal.pose.position.z = 0.591
@@ -25,3 +25,7 @@ p.goal.pose.orientation.w = 0.004
 
 
 client.send_goal(p.goal)
+
+client.wait_for_result()
+
+rospy.logwarn("Goal reached!")
