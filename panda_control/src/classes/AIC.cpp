@@ -56,6 +56,8 @@
       // The first time we retrieve the position we define the initial beliefs about the states
       mu = jointPos;
       mu_p = jointVel;
+      mu_past = mu;
+      mu_p_past = mu_p;
     }
   }
 
@@ -65,11 +67,17 @@
     dataReceived = 0;
 
     // Variances associated with the beliefs and the sensory inputs
-    var_mu = 5.0;
+    var_mu = 10.0;
     var_muprime = 10.0;
-    var_q = 1;
-    var_qdot = 1;
+    var_q = 0.1;
+    var_qdot = 0.1;
 
+    // Controller values, diagonal elements of the gain matrices for the PID like control law
+    k_p = 200;
+    k_d = 80;
+    k_i = 0;
+    I_gain <<  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    
     // Learning rates for the gradient descent (found that a ratio of 60 works good)
     k_mu = 11.67;
     k_a = 700;
@@ -79,12 +87,19 @@
     SigmaP_yq1 = Eigen::Matrix<double, 7, 7>::Zero();
     SigmaP_mu = Eigen::Matrix<double, 7, 7>::Zero();
     SigmaP_muprime = Eigen::Matrix<double, 7, 7>::Zero();
+    K_p = Eigen::Matrix<double, 7, 7>::Zero();
+    K_d = Eigen::Matrix<double, 7, 7>::Zero();
+    K_i = Eigen::Matrix<double, 7, 7>::Zero();
+
 
     for( int i = 0; i < SigmaP_yq0.rows(); i = i + 1 ) {
       SigmaP_yq0(i,i) = 1/var_q;
       SigmaP_yq1(i,i) = 1/var_qdot;
       SigmaP_mu(i,i) = 1/var_mu;
       SigmaP_muprime(i,i) = 1/var_muprime;
+      K_p(i,i) = k_p;
+      K_d(i,i) = k_d;
+      K_i(i,i) = k_i;
     }
 
     // Initialize control actions
@@ -106,33 +121,45 @@
   void AIC::minimiseF(){
 
     // Compute single sensory prediction errors
-    SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
-    SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);
-    SPEmu_p = (mu_p.transpose()+mu.transpose()-mu_d.transpose())*SigmaP_mu*(mu_p+mu-mu_d);
-    SPEmu_pp = (mu_pp.transpose()+mu_p.transpose())*SigmaP_muprime*(mu_pp+mu_p);
+    //SPEq = (jointPos.transpose()-mu.transpose())*SigmaP_yq0*(jointPos-mu);
+    //SPEdq = (jointVel.transpose()-mu_p.transpose())*SigmaP_yq1*(jointVel-mu_p);
+    //SPEmu_p = (mu_p.transpose()+mu.transpose()-mu_d.transpose())*SigmaP_mu*(mu_p+mu-mu_d);
+    //SPEmu_pp = (mu_pp.transpose()+mu_p.transpose())*SigmaP_muprime*(mu_pp+mu_p);
 
     // Free-energy as a sum of squared values (i.e. sum the SPE)
     F.data = SPEq + SPEdq + SPEmu_p + SPEmu_pp;
 
     // Free-energy minimization using gradient descent and beliefs update
-    mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
-    mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p));
-    mu_dot_pp = - k_mu*(SigmaP_muprime*(mu_pp+mu_p));
+    //mu_dot = mu_p - k_mu*(-SigmaP_yq0*(jointPos-mu)+SigmaP_mu*(mu_p+mu-mu_d));
+    //mu_dot_p = mu_pp - k_mu*(-SigmaP_yq1*(jointVel-mu_p)+SigmaP_mu*(mu_p+mu-mu_d)+SigmaP_muprime*(mu_pp+mu_p));
+    //mu_dot_pp = - k_mu*(SigmaP_muprime*(mu_pp+mu_p));
+
+    // Unbiased AIC
+    mu_dot = - k_mu*(-SigmaP_yq0*(jointPos-mu) + SigmaP_mu*(mu - (mu_past + h*mu_p_past)));
+    mu_dot_p = - k_mu*(-SigmaP_yq1*(jointVel-mu_p) + SigmaP_muprime*(mu_p-mu_p_past));
+
+    // Save current value of the belief to use in the next iteration as previous value
+    mu_past = mu;
+    mu_p_past = mu_p;
 
     // Belifs update
     mu = mu + h*mu_dot;             // Belief about the position
     mu_p = mu_p + h*mu_dot_p;       // Belief about motion of mu
-    mu_pp = mu_pp + h*mu_dot_pp;    // Belief about motion of mu'
+    // mu_pp = mu_pp + h*mu_dot_pp;    // Belief about motion of mu'
+
+    // Set curret values for next ieration
+    I_gain = I_gain + mu_d-mu;
+
 
     // Publish beliefs as Float64MultiArray
     for (int i=0;i<7;i++){
        AIC_mu.data[i] = mu(i);
        AIC_mu_p.data[i] = mu_p(i);
-       AIC_mu_pp.data[i] = mu_pp(i);
+       //AIC_mu_pp.data[i] = mu_pp(i);
     }
     // Define SPE message
-    SPE.data[0] = SPEq;
-    SPE.data[1] = SPEdq;
+    //SPE.data[0] = SPEq;
+    //SPE.data[1] = SPEdq;
 
     // Calculate and send control actions
     AIC::computeActions();
@@ -141,7 +168,7 @@
     IFE_pub.publish(F);
 
     // Sensory prediction error publisher
-    SPE_pub.publish(SPE);
+    //SPE_pub.publish(SPE);
 
     // Publish beliefs
     beliefs_mu_pub.publish(AIC_mu);
@@ -151,7 +178,10 @@
 
   void   AIC::computeActions(){
     // Compute control actions through gradient descent of F
-    u = u-h*k_a*(SigmaP_yq1*(jointVel-mu_p)+SigmaP_yq0*(jointPos-mu));
+    //u = u-h*k_a*(SigmaP_yq1*(jointVel-mu_p)+SigmaP_yq0*(jointPos-mu));
+
+    // Unbiased AIC
+    u = K_p*(mu_d-mu) + K_d*(mu_p_d-mu_p) + K_i*(I_gain);
 
     // Set the toques from u and publish
     tau1.data = u(0); tau2.data = u(1); tau3.data = u(2); tau4.data = u(3);
@@ -174,6 +204,7 @@
   void AIC::setGoal(std::vector<double> desiredPos){
     for(int i=0; i<desiredPos.size(); i++){
       mu_d(i) = desiredPos[i];
+      mu_p_d(i) = 0.0;
     }
   }
 

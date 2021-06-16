@@ -58,12 +58,16 @@ private:
   double var_q, var_qdot, var_mu, var_muprime;
   // Precision matrices, diagonal matrices with the inverce of the variance
   Eigen::Matrix<double, 7, 7> SigmaP_yq0, SigmaP_yq1, SigmaP_mu, SigmaP_muprime;
-  // Beliefs about the states and their derivatives mu, mu', mu'', column vectors of 7 elements
-  Eigen::Matrix<double, 7, 1> mu, mu_p, mu_pp, mu_dot, mu_dot_p, mu_dot_pp, jointPos, jointVel;
+  // Controller parameters, PID like control law. Diagonal matrices
+  Eigen::Matrix<double, 7, 7> K_p, K_i, K_d;
+  // Beliefs about the states and their derivatives mu, mu', mu'', column vectors of 7 elements. Temp variables mu_past, mu_p_past to keep track of past time step
+  Eigen::Matrix<double, 7, 1> mu, mu_p, mu_pp, mu_dot, mu_dot_p, mu_dot_pp, jointPos, jointVel, mu_past, mu_p_past;
   // Desired robot's states, column vector of 7 elements
-  Eigen::Matrix<double, 7, 1> mu_d;
-  // Control actions,  column vector of 7 elements
-  Eigen::Matrix<double, 7, 1> u;
+  Eigen::Matrix<double, 7, 1> mu_d, mu_p_d;
+  // Control actions,  column vector of 7 elements, and integral gain
+  Eigen::Matrix<double, 7, 1> u, I_gain;
+  // Parameters for control law, to populate the gain matrices
+  double  k_p, k_d, k_i;
   // Learning rates and integration step for the AIC
   double k_mu, k_a, h;
   // Sensory prediction errors
